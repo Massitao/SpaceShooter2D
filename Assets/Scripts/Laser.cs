@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Laser : MonoBehaviour
 {
@@ -10,28 +8,42 @@ public class Laser : MonoBehaviour
 
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         Move();
     }
 
-    void Move()
+    private void Move()
     {
         transform.Translate(Vector3.up * laserSpeed * Time.deltaTime);
 
         if (transform.position.y >= laserBoundY)
         {
+            if (transform.parent != null)
+            {
+                Destroy(transform.parent.gameObject);
+            }
+
             Destroy(gameObject);
         }
     }
 
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (other.gameObject.TryGetComponent(out Enemy enemyCollided))
         {
-            enemyCollided.Death();
-            Destroy(gameObject);
+            if (collision.gameObject.TryGetComponent(out Ship playerCollided))
+            {
+                playerCollided.Damage(1);
+                Destroy(gameObject);
+            }
+
+            if (collision.gameObject.TryGetComponent(out Enemy enemyCollided))
+            {
+                enemyCollided.Death();
+                Destroy(gameObject);
+            }
         }
+
     }
 }

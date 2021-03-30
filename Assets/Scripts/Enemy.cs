@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
@@ -11,12 +9,12 @@ public class Enemy : MonoBehaviour
 
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         Move();
     }
 
-    void Move()
+    private void Move()
     {
         transform.Translate(Vector3.down * enemySpeed * Time.deltaTime);
 
@@ -28,7 +26,16 @@ public class Enemy : MonoBehaviour
 
     public void Death()
     {
-        Debug.Log($"{gameObject.name} has died!");
         Destroy(gameObject);
+    }
+
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.TryGetComponent(out Ship player))
+        {
+            player.Damage(1);
+            Death();
+        }
     }
 }
