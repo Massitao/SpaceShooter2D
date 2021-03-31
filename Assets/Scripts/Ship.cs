@@ -43,12 +43,18 @@ public class Ship : MonoBehaviour
     private bool shieldActive => shieldCoroutine != null;
     private Coroutine shieldCoroutine;
 
+    [Header("Score")]
+    [SerializeField] private int score;
+
 
 
     // Start is called before the first frame update
     private void Start()
     {
         transform.position = new Vector3(0f, 0f, 0f);
+
+        UIManager.Instance.UpdateScore(score);
+        UIManager.Instance.UpdateLives(shipHealth);
     }
 
     // Update is called once per frame
@@ -106,9 +112,11 @@ public class Ship : MonoBehaviour
         }
 
         shipHealth -= damage;
+        UIManager.Instance.UpdateLives(shipHealth);
 
         if (shipHealth <= 0)
         {
+            GameManager.Instance.GameOver();
             Death();
         }
     }
@@ -194,5 +202,11 @@ public class Ship : MonoBehaviour
         shieldAnim.SetBool(shieldAnimActiveHash, false);
 
         shieldCoroutine = null;
+    }
+
+    public void AddScore(int scoreToAdd)
+    {
+        score += scoreToAdd;
+        UIManager.Instance.UpdateScore(score);
     }
 }

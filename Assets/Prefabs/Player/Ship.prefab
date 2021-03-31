@@ -145,19 +145,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shipCollider: {fileID: 7222636168036227812}
-  shipHealth: 1
+  shipHealth: 3
   shipSpeed: 8
-  wrapMoveBoundsX: 10.92
-  moveBoundsY: {x: -3.5, y: 4.5}
+  wrapMoveBoundsX: 16.4
+  moveBoundsY: {x: -6.5, y: 7.75}
   laserPrefab: {fileID: 2716096619162409450, guid: e6d94afe478a45148ab7019023453c26,
     type: 3}
   laserSpawnOffset: {x: 0, y: 0.6, z: 0}
   fireRate: 0.2
   tripleLaserPrefab: {fileID: 8347454820370703129, guid: 08b6f497d6c3cac43b0520072905dbf4,
     type: 3}
-  extraSpeedMultiplier: 1.5
+  extraSpeedMultiplier: 2
   shieldAnim: {fileID: 1749529917447679758}
   shieldAnim_Active: ShieldActive
+  score: 0
 --- !u!1 &8840537540469043221
 GameObject:
   m_ObjectHideFlags: 0

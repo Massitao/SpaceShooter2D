@@ -6,13 +6,11 @@ public class Laser : MonoBehaviour
     [SerializeField] private float laserSpeed = 6f;
     [SerializeField] private float laserBoundY = 10f;
 
-
     // Update is called once per frame
     private void Update()
     {
         Move();
     }
-
     private void Move()
     {
         transform.Translate(Vector3.up * laserSpeed * Time.deltaTime);

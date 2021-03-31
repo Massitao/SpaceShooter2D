@@ -26,6 +26,7 @@ public class SpawnManager : MonoSingleton<SpawnManager>
         StartPowerUpSpawn();
     }
 
+
     public void StartEnemySpawn()
     {
         if (enemyRespawnCoroutine == null)
@@ -50,7 +51,6 @@ public class SpawnManager : MonoSingleton<SpawnManager>
             yield return spawnRate;
         }
     }
-
 
     public void StartPowerUpSpawn()
     {
@@ -77,7 +77,6 @@ public class SpawnManager : MonoSingleton<SpawnManager>
             yield return spawnRate;
         }
     }
-
 
     public void StopAllSpawns()
     {
