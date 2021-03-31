@@ -15,15 +15,15 @@ public class SpawnManager : MonoSingleton<SpawnManager>
 
 
     [Header("PowerUp Spawner")]
-    [SerializeField] private GameObject tripleShotPowerUpPrefab;
-    private Coroutine tripleShotRespawnCoroutine;
+    [SerializeField] private GameObject powerUpPrefab;
+    private Coroutine powerUpRespawnCoroutine;
 
 
     // Start is called before the first frame update
     private void Start()
     {
         StartEnemySpawn();
-        StartTripleShotSpawn();
+        StartPowerUpSpawn();
     }
 
     public void StartEnemySpawn()
@@ -52,26 +52,28 @@ public class SpawnManager : MonoSingleton<SpawnManager>
     }
 
 
-    public void StartTripleShotSpawn()
+    public void StartPowerUpSpawn()
     {
-        if (tripleShotRespawnCoroutine == null)
+        if (powerUpRespawnCoroutine == null)
         {
-            tripleShotRespawnCoroutine = StartCoroutine(SpawnTripleShot());
+            powerUpRespawnCoroutine = StartCoroutine(SpawnPowerUp());
         }
     }
-    public void StopTripleShotSpawn()
+    public void StopPowerUpSpawn()
     {
-        if (tripleShotRespawnCoroutine != null)
+        if (powerUpRespawnCoroutine != null)
         {
-            StopCoroutine(tripleShotRespawnCoroutine);
-            tripleShotRespawnCoroutine = null;
+            StopCoroutine(powerUpRespawnCoroutine);
+            powerUpRespawnCoroutine = null;
         }
     }
-    private IEnumerator SpawnTripleShot()
+    private IEnumerator SpawnPowerUp()
     {
         while (true)
         {
-            Instantiate(tripleShotPowerUpPrefab, new Vector3(Random.Range(respawnBoundX.x, respawnBoundX.y), respawnHeightY, 0f), Quaternion.identity);
+            PowerUp newPowerUp = Instantiate(powerUpPrefab, new Vector3(Random.Range(respawnBoundX.x, respawnBoundX.y), respawnHeightY, 0f), Quaternion.identity).GetComponent<PowerUp>();
+            int randomPowerUp = Random.Range(0, System.Enum.GetNames(typeof(PowerUp.Type)).Length);
+            newPowerUp.SetPowerupType((PowerUp.Type)randomPowerUp);
             yield return spawnRate;
         }
     }
@@ -80,6 +82,6 @@ public class SpawnManager : MonoSingleton<SpawnManager>
     public void StopAllSpawns()
     {
         StopEnemySpawn();
-        StopTripleShotSpawn();
+        StopPowerUpSpawn();
     }
 }

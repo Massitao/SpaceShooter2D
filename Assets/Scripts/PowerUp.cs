@@ -2,27 +2,62 @@
 
 public class PowerUp : MonoBehaviour
 {
+    [Header("Components")]
+    [SerializeField] private Animator anim;
+
+    [Header("Animator")]
+    [SerializeField] private string animPowerUpType;
+    private int animTypeHash => Animator.StringToHash(animPowerUpType);
+
+    [Header("PowerUp Type")]
+    [SerializeField] private Type type;
+    public enum Type { TripleShot, Speed, Shield }
+
     [Header("PowerUp Move")]
-    [SerializeField] protected float powerSpeed = 3f;
-    [SerializeField] protected float powerDespawnY = -9f;
+    [SerializeField] protected float speed = 3f;
+    [SerializeField] protected float despawnY = -9f;
 
 
     // Update is called once per frame
-    protected virtual void Update()
+    private void Update()
     {
-        transform.Translate(Vector3.down * powerSpeed * Time.deltaTime);
+        // Move Downwards
+        transform.Translate(Vector3.down * speed * Time.deltaTime);
 
-        if (transform.position.y <= powerDespawnY)
+        // Destroy if it reaches the Despawn Point
+        if (transform.position.y <= despawnY)
         {
             Destroy(gameObject);
         }
     }
 
-    protected virtual void PickUp(Ship player)
+    // Override Power-up type
+    public void SetPowerupType(Type newType)
     {
-        // Code goes here
+        type = newType;
+        anim.SetInteger(animTypeHash, (int)newType);
     }
 
+    // Triggers Ship powerup ability
+    private void PickUp(Ship player)
+    {
+        switch (type)
+        {
+            case Type.TripleShot:
+                player.ActivateTripleShot();
+                break;
+
+            case Type.Speed:
+                player.ActivateExtraSpeed();
+                break;
+
+            case Type.Shield:
+                player.ActivateShield();
+                break;
+        }
+    }
+
+    // Collision with Ship will trigger a ship ability, destroying this GameObject in the process
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.TryGetComponent(out Ship player))

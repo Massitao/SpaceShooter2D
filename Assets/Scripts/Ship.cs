@@ -3,6 +3,9 @@ using UnityEngine;
 
 public class Ship : MonoBehaviour
 {
+    [Header("Components")]
+    [SerializeField] private Collider2D shipCollider;
+
     [Header("Inputs")]
     private Vector2 moveInput;
 
@@ -11,7 +14,7 @@ public class Ship : MonoBehaviour
 
     [Header("Ship Move")]
     [SerializeField] private float shipSpeed = 3f;
-    [SerializeField] private Vector2 moveBoundsX;
+    [SerializeField] private float wrapMoveBoundsX;
     [SerializeField] private Vector2 moveBoundsY;
 
     [Header("Ship Shoot")]
@@ -20,11 +23,25 @@ public class Ship : MonoBehaviour
     [SerializeField] private float fireRate = .5f;
     private float fireRateTimer;
 
+    [Header("Abilities")]
+    private WaitForSeconds abilityDuration = new WaitForSeconds(3f);
+
     [Header("Triple Shoot")]
     [SerializeField] private GameObject tripleLaserPrefab;
     private bool tripleLaserActive => tripleShotCoroutine != null;
-    private WaitForSeconds tripleShotDuration = new WaitForSeconds(3f);
     private Coroutine tripleShotCoroutine;
+
+    [Header("Extra Speed")]
+    [SerializeField] [Range(1f, 3f)] private float extraSpeedMultiplier;
+    private bool extraSpeedActive => extraSpeedCoroutine != null;
+    private Coroutine extraSpeedCoroutine;
+
+    [Header("Shield")]
+    [SerializeField] private Animator shieldAnim;
+    [SerializeField] private string shieldAnim_Active;
+    private int shieldAnimActiveHash => Animator.StringToHash(shieldAnim_Active);
+    private bool shieldActive => shieldCoroutine != null;
+    private Coroutine shieldCoroutine;
 
 
 
@@ -37,16 +54,30 @@ public class Ship : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
+        UpdateInput();
         Move();
         Shoot();
     }
 
-    private void Move()
+    private void UpdateInput()
     {
         moveInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
-        transform.Translate(moveInput * shipSpeed * Time.deltaTime);
+    }
 
-        transform.position = new Vector3(Mathf.Clamp(transform.position.x, moveBoundsX.x, moveBoundsX.y), Mathf.Clamp(transform.position.y, moveBoundsY.x, moveBoundsY.y), transform.position.z);
+    private void Move()
+    {
+        // If Extra Speed Power-up is active, apply extra speed. Else, keep normal ship speed
+        float speedToApply = extraSpeedActive ? shipSpeed * extraSpeedMultiplier : shipSpeed;
+        transform.Translate(moveInput * speedToApply * Time.deltaTime);
+
+        // Wrap ship around X axis
+        if (Mathf.Abs(transform.position.x) > wrapMoveBoundsX)
+        {
+            transform.position = new Vector3(wrapMoveBoundsX * Mathf.Sign(transform.position.x) * -1, transform.position.y);
+        }
+
+        // Clamp Y position so the player doesn't leave the screen
+        transform.position = new Vector3(transform.position.x, Mathf.Clamp(transform.position.y, moveBoundsY.x, moveBoundsY.y), transform.position.z);
     }
     private void Shoot()
     {
@@ -54,13 +85,12 @@ public class Ship : MonoBehaviour
         {
             if (Time.time >= fireRateTimer)
             {
-                if (tripleLaserActive)
+                GameObject laserType = tripleLaserActive ? tripleLaserPrefab : laserPrefab;
+                Collider2D[] lasersToIgnore = Instantiate(laserType, transform.position + laserSpawnOffset, Quaternion.identity).GetComponentsInChildren<Collider2D>();
+
+                for (int i = 0; i < lasersToIgnore.Length; i++)
                 {
-                    Instantiate(tripleLaserPrefab, transform.position + laserSpawnOffset, Quaternion.identity);
-                }
-                else
-                {
-                    Instantiate(laserPrefab, transform.position + laserSpawnOffset, Quaternion.identity);
+                    Physics2D.IgnoreCollision(shipCollider, lasersToIgnore[i], true);
                 }
 
                 fireRateTimer = Time.time + fireRate;
@@ -69,6 +99,12 @@ public class Ship : MonoBehaviour
     }
     public void Damage(int damage)
     {
+        if (shieldActive)
+        {
+            StopShield();
+            return;
+        }
+
         shipHealth -= damage;
 
         if (shipHealth <= 0)
@@ -80,6 +116,8 @@ public class Ship : MonoBehaviour
     {
         SpawnManager.Instance.StopAllSpawns();
         StopTripleShot();
+        StopExtraSpeed();
+        StopShield();
         Destroy(gameObject);
     }
 
@@ -100,10 +138,61 @@ public class Ship : MonoBehaviour
             tripleShotCoroutine = null;
         }
     }
-
     private IEnumerator TripleShotDuration()
     {
-        yield return tripleShotDuration;
+        yield return abilityDuration;
         tripleShotCoroutine = null;
+    }
+
+    public void ActivateExtraSpeed()
+    {
+        if (extraSpeedCoroutine != null)
+        {
+            StopCoroutine(extraSpeedCoroutine);
+        }
+
+        extraSpeedCoroutine = StartCoroutine(ExtraSpeedDuration());
+    }
+    private void StopExtraSpeed()
+    {
+        if (extraSpeedCoroutine != null)
+        {
+            StopCoroutine(extraSpeedCoroutine);
+            extraSpeedCoroutine = null;
+        }
+    }
+    private IEnumerator ExtraSpeedDuration()
+    {
+        yield return abilityDuration;
+        extraSpeedCoroutine = null;
+    }
+
+    public void ActivateShield()
+    {
+        if (shieldCoroutine != null)
+        {
+            StopCoroutine(shieldCoroutine);
+        }
+
+        shieldCoroutine = StartCoroutine(ShieldDuration());
+    }
+    private void StopShield()
+    {
+        if (shieldCoroutine != null)
+        {
+            StopCoroutine(shieldCoroutine);
+            shieldAnim.SetBool(shieldAnimActiveHash, false);
+            shieldCoroutine = null;
+        }
+    }
+    private IEnumerator ShieldDuration()
+    {
+        shieldAnim.SetBool(shieldAnimActiveHash, true);
+    
+        yield return abilityDuration;
+
+        shieldAnim.SetBool(shieldAnimActiveHash, false);
+
+        shieldCoroutine = null;
     }
 }
