@@ -2,10 +2,19 @@
 
 public class Enemy : MonoBehaviour
 {
-    [Header("Enemy Move")]
+    [Header("Components")]
+    [SerializeField] private Animator enemyAnim;
+    [SerializeField] private Collider2D enemyCol;
+
+    [Header("Animator")]
+    [SerializeField] private string enemyAnim_DeathTrigger;
+    private int enemyAnim_DeathTriggerHash => Animator.StringToHash(enemyAnim_DeathTrigger);
+
+    [Header("Enemy Properties")]
     [SerializeField] private float enemySpeed = 4f;
     [SerializeField] private Vector2 enemyBoundsX;
     [SerializeField] private Vector2 enemyBoundsY;
+    private bool isExploding;
 
     [Header("Player Reference")]
     private Ship ship;
@@ -33,6 +42,16 @@ public class Enemy : MonoBehaviour
             transform.position = new Vector3(Random.Range(enemyBoundsX.x, enemyBoundsX.y), enemyBoundsY.y, transform.position.z);
         }
     }
+    public void Explode()
+    {
+        if (!isExploding)
+        {
+            isExploding = true;
+            enemySpeed = 2;
+            enemyCol.enabled = false;
+            enemyAnim.SetTrigger(enemyAnim_DeathTriggerHash);
+        }
+    }
     public void Death()
     {
         ship.AddScore(scoreToGive);
@@ -44,7 +63,7 @@ public class Enemy : MonoBehaviour
         if (collision.TryGetComponent(out Ship player))
         {
             player.Damage(1);
-            Death();
+            Explode();
         }
     }
 }

@@ -38,7 +38,7 @@ public class Laser : MonoBehaviour
 
             if (collision.gameObject.TryGetComponent(out Enemy enemyCollided))
             {
-                enemyCollided.Death();
+                enemyCollided.Explode();
                 Destroy(gameObject);
             }
         }
