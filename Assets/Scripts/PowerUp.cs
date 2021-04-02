@@ -2,6 +2,7 @@
 
 public class PowerUp : MonoBehaviour
 {
+    #region Variables
     [Header("Components")]
     [SerializeField] private Animator anim;
 
@@ -19,8 +20,10 @@ public class PowerUp : MonoBehaviour
 
     [Header("Audio")]
     [SerializeField] private AudioClip powerUpClip;
+    #endregion
 
 
+    #region MonoBehaviour Methods
     // Update is called once per frame
     private void Update()
     {
@@ -34,6 +37,18 @@ public class PowerUp : MonoBehaviour
         }
     }
 
+    // Collision with Ship will trigger a ship ability, destroying this GameObject in the process
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.TryGetComponent(out Ship player))
+        {
+            PickUp(player);
+            Destroy(gameObject);
+        }
+    }
+    #endregion
+
+    #region Custom Methods
     // Override Power-up type
     public void SetPowerupType(Type newType)
     {
@@ -44,33 +59,8 @@ public class PowerUp : MonoBehaviour
     // Triggers Ship powerup ability
     private void PickUp(Ship player)
     {
-        switch (type)
-        {
-            case Type.TripleShot:
-                player.ActivateTripleShot();
-                break;
-
-            case Type.Speed:
-                player.ActivateExtraSpeed();
-                break;
-
-            case Type.Shield:
-                player.ActivateShield();
-                break;
-        }
-
-        AudioSource powerUpAudio = new GameObject($"PowerUp AudioSource").AddComponent<AudioSource>();
-        powerUpAudio.PlayOneShot(powerUpClip);
-        Destroy(powerUpAudio.gameObject, powerUpClip.length);
+        player.ActivatePowerUp(type);
+        AudioManager.Instance?.PlayOneShotClip(powerUpClip);
     }
-
-    // Collision with Ship will trigger a ship ability, destroying this GameObject in the process
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.TryGetComponent(out Ship player))
-        {
-            PickUp(player);
-            Destroy(gameObject);
-        }
-    }
+    #endregion
 }

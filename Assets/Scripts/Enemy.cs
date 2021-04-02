@@ -1,74 +1,97 @@
 ﻿using UnityEngine;
 
-public class Enemy : MonoBehaviour
+public class Enemy : MonoBehaviour, IDamageable
 {
+    #region Variables
+    #region Components
     [Header("Components")]
     [SerializeField] private Animator enemyAnim;
     [SerializeField] private Collider2D enemyCol;
     [SerializeField] private AudioSource enemyAudioSource;
+    #endregion
 
-    [Header("Animator")]
+    #region Animator
+    [Header("Animator References")]
     [SerializeField] private string enemyAnim_DeathTrigger;
     private int enemyAnim_DeathTriggerHash => Animator.StringToHash(enemyAnim_DeathTrigger);
+    #endregion
 
+    #region Enemy Properties
     [Header("Enemy Properties")]
-    [SerializeField] private float enemySpeed = 4f;
-    [SerializeField] private Vector2 enemyBoundsX;
-    [SerializeField] private Vector2 enemyBoundsY;
-    private bool isExploding;
+    [SerializeField] private int entityHealth;
+    public int EntityHealth { get { return entityHealth; } set { entityHealth = value; } }
 
-    [Header("Player Reference")]
-    private Ship ship;
+    [SerializeField] private float enemySpeed = 4f;
 
     [Header("Score")]
     [SerializeField] private int scoreToGive;
 
     [Header("Audio")]
     [SerializeField] private AudioClip explosionClip;
+    #endregion
+
+    #region Events
+    // Events
+    public System.Action<int> OnEntityDamaged { get; set; }
+    public System.Action<IDamageable> OnEntityKilled { get; set; }
+    #endregion
+    #endregion
 
 
-    private void Start()
-    {
-        ship = FindObjectOfType<Ship>();
-    }
+    #region MonoBehaviour Methods
     // Update is called once per frame
     private void Update()
     {
         Move();
     }
 
-    private void Move()
-    {
-        transform.Translate(Vector3.down * enemySpeed * Time.deltaTime);
-
-        if (transform.position.y <= enemyBoundsY.x)
-        {
-            transform.position = new Vector3(Random.Range(enemyBoundsX.x, enemyBoundsX.y), enemyBoundsY.y, transform.position.z);
-        }
-    }
-    public void Explode()
-    {
-        if (!isExploding)
-        {
-            isExploding = true;
-            enemySpeed = 2;
-            enemyCol.enabled = false;
-            enemyAnim.SetTrigger(enemyAnim_DeathTriggerHash);
-            enemyAudioSource.PlayOneShot(explosionClip);
-        }
-    }
-    public void Death()
-    {
-        ship.AddScore(scoreToGive);
-        Destroy(gameObject);
-    }
-
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.TryGetComponent(out Ship player))
+        if (collision.TryGetComponent(out IDamageable entityCollided))
         {
-            player.Damage(1);
+            entityCollided.TakeDamage(1);
             Explode();
         }
     }
+    #endregion
+
+    #region Custom Methods
+    private void Move()
+    {
+        // Move downwards
+        transform.Translate(Vector3.down * enemySpeed * Time.deltaTime);
+
+        // If the enemy is out of bounds, tp it above the screen in a new X position
+        if (transform.position.y <= SpaceShooterData.EnemyBoundLimitsY.x)
+        {
+            transform.position = new Vector3(Random.Range(-SpaceShooterData.EnemySpawnX, SpaceShooterData.EnemySpawnX), SpaceShooterData.EnemyBoundLimitsY.y, transform.position.z);
+        }
+    }
+
+    public void TakeDamage(int damageToTake)
+    {
+        EntityHealth -= damageToTake;
+        EntityHealth = Mathf.Clamp(EntityHealth, 0, 100);
+        OnEntityDamaged?.Invoke(EntityHealth);
+
+        if (entityHealth == 0)
+        {
+            Explode();
+        }
+    }
+    private void Explode()
+    {
+        enemyCol.enabled = false;
+        enemySpeed = 2;
+
+        enemyAnim.SetTrigger(enemyAnim_DeathTriggerHash);
+        enemyAudioSource.PlayOneShot(explosionClip);
+    }
+    public void Death()
+    {
+        GameManager.Instance?.AddScore(scoreToGive);
+        OnEntityKilled?.Invoke(this);
+        Destroy(gameObject);
+    }
+    #endregion
 }

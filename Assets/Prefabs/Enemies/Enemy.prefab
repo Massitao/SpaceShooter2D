@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 3499002942499517954}
   - component: {fileID: 249818808768911342}
   - component: {fileID: 3499002942499517957}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Enemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -242,6 +242,7 @@ MonoBehaviour:
   enemyCol: {fileID: 3499002942499517954}
   enemyAudioSource: {fileID: 249818808768911342}
   enemyAnim_DeathTrigger: OnEnemyDeath
+  entityHealth: 1
   enemySpeed: 6
   enemyBoundsX: {x: -15, y: 15}
   enemyBoundsY: {x: -9, y: 15}
