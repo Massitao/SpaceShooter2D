@@ -5,6 +5,7 @@ public class Enemy : MonoBehaviour
     [Header("Components")]
     [SerializeField] private Animator enemyAnim;
     [SerializeField] private Collider2D enemyCol;
+    [SerializeField] private AudioSource enemyAudioSource;
 
     [Header("Animator")]
     [SerializeField] private string enemyAnim_DeathTrigger;
@@ -21,6 +22,9 @@ public class Enemy : MonoBehaviour
 
     [Header("Score")]
     [SerializeField] private int scoreToGive;
+
+    [Header("Audio")]
+    [SerializeField] private AudioClip explosionClip;
 
 
     private void Start()
@@ -50,6 +54,7 @@ public class Enemy : MonoBehaviour
             enemySpeed = 2;
             enemyCol.enabled = false;
             enemyAnim.SetTrigger(enemyAnim_DeathTriggerHash);
+            enemyAudioSource.PlayOneShot(explosionClip);
         }
     }
     public void Death()

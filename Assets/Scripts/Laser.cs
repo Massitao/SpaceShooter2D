@@ -41,6 +41,12 @@ public class Laser : MonoBehaviour
                 enemyCollided.Explode();
                 Destroy(gameObject);
             }
+
+            if (collision.gameObject.TryGetComponent(out Asteroid asteroidCollided))
+            {
+                asteroidCollided.Explode();
+                Destroy(gameObject);
+            }
         }
 
     }

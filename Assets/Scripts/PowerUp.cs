@@ -17,6 +17,9 @@ public class PowerUp : MonoBehaviour
     [SerializeField] protected float speed = 3f;
     [SerializeField] protected float despawnY = -9f;
 
+    [Header("Audio")]
+    [SerializeField] private AudioClip powerUpClip;
+
 
     // Update is called once per frame
     private void Update()
@@ -55,6 +58,10 @@ public class PowerUp : MonoBehaviour
                 player.ActivateShield();
                 break;
         }
+
+        AudioSource powerUpAudio = new GameObject($"PowerUp AudioSource").AddComponent<AudioSource>();
+        powerUpAudio.PlayOneShot(powerUpClip);
+        Destroy(powerUpAudio.gameObject, powerUpClip.length);
     }
 
     // Collision with Ship will trigger a ship ability, destroying this GameObject in the process

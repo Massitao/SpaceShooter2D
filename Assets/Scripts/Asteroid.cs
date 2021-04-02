@@ -1,12 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Asteroid : MonoBehaviour
 {
     [Header("Asteroid Properties")]
     [SerializeField] private float asteroidMoveSpeed = 2f;
     [SerializeField] private float asteroidRotateAnglePerSecond = 5f;
+    [SerializeField] private GameObject explosionPrefab;
 
     [Header("Player Reference")]
     private Ship ship;
@@ -39,14 +38,15 @@ public class Asteroid : MonoBehaviour
     public void Explode()
     {
         ship.AddScore(scoreToGive);
-        Destroy(gameObject);
+        Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+        Destroy(gameObject, 0.1f);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.TryGetComponent(out Ship player))
         {
-            player.Damage(1);
+            player.Damage(3);
             Explode();
         }
     }
