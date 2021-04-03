@@ -31,8 +31,8 @@ public class Ship : MonoBehaviour, IDamageable
     private int engineAnim_HurtHash => Animator.StringToHash(engineAnim_Hurt);
 
     // SHIELD
-    [SerializeField] private string shieldAnim_Active;
-    private int shieldAnimActiveHash => Animator.StringToHash(shieldAnim_Active);
+    [SerializeField] private string shieldAnim_Health;
+    private int shieldAnim_HealthHash => Animator.StringToHash(shieldAnim_Health);
     #endregion
 
     #region Input Values
@@ -85,8 +85,8 @@ public class Ship : MonoBehaviour, IDamageable
     private bool extraSpeedActive => extraSpeedCoroutine != null;
 
     [Header("Shield")]
-    private Coroutine shieldCoroutine;
-    private bool shieldActive => shieldCoroutine != null;
+    private int shieldHealth = 3;
+    private bool shieldActive;
     #endregion
 
     #region Events
@@ -196,12 +196,13 @@ public class Ship : MonoBehaviour, IDamageable
                 break;
 
             case PowerUp.Type.Shield:
-                if (shieldCoroutine != null)
-                {
-                    StopCoroutine(shieldCoroutine);
-                }
+                shieldHealth = 3;
+                shieldActive = true;
 
-                shieldCoroutine = StartCoroutine(ShieldDuration());
+                shieldAnim.gameObject.SetActive(shieldActive);
+
+                shieldAnim.SetInteger(shieldAnim_HealthHash, shieldHealth);
+
                 break;
         }
     }
@@ -230,12 +231,12 @@ public class Ship : MonoBehaviour, IDamageable
                 break;
 
             case PowerUp.Type.Shield:
-                if (shieldCoroutine != null)
-                {
-                    StopCoroutine(shieldCoroutine);
-                    shieldAnim.SetBool(shieldAnimActiveHash, false);
-                    shieldCoroutine = null;
-                }
+                shieldHealth = 0;
+                shieldActive = false;
+
+                shieldAnim.gameObject.SetActive(shieldActive);
+
+                shieldAnim.SetInteger(shieldAnim_HealthHash, shieldHealth);
                 break;
         }
     }
@@ -250,16 +251,7 @@ public class Ship : MonoBehaviour, IDamageable
         yield return abilityDuration;
         extraSpeedCoroutine = null;
     }
-    private IEnumerator ShieldDuration()
-    {
-        shieldAnim.SetBool(shieldAnimActiveHash, true);
-    
-        yield return abilityDuration;
 
-        shieldAnim.SetBool(shieldAnimActiveHash, false);
-
-        shieldCoroutine = null;
-    }
 
     private void ActivateInvincibility()
     {
@@ -295,11 +287,9 @@ public class Ship : MonoBehaviour, IDamageable
     {
         if (shieldActive)
         {
-            StopPowerUp(PowerUp.Type.Shield);
-            ActivateInvincibility();
+            ShieldTakeDamage(damageToTake);
             return;
         }
-
         if (invincible) return;
 
         EntityHealth -= damageToTake;
@@ -325,6 +315,19 @@ public class Ship : MonoBehaviour, IDamageable
                 Death();
                 break;
         }
+    }
+    private void ShieldTakeDamage(int damageToTake)
+    {
+        shieldHealth -= damageToTake;
+        shieldHealth = Mathf.Clamp(shieldHealth, 0, 3);
+
+        shieldAnim.SetInteger(shieldAnim_HealthHash, shieldHealth);
+
+        if (shieldHealth == 0)
+        {
+            StopPowerUp(PowerUp.Type.Shield);
+        }
+        ActivateInvincibility();
     }
     public void Death()
     {
