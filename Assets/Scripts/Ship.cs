@@ -60,6 +60,9 @@ public class Ship : MonoBehaviour, IDamageable
     [SerializeField] private float fireRate = .2f;
     private float fireRateTimer;
 
+    [SerializeField] private int ammoCount;
+    [SerializeField] private int maxAmmo;
+
     [Header("Ship Invincibility")]
     private WaitForSeconds invincibilityDuration = new WaitForSeconds(2f);
     private Coroutine invincibilityCoroutine;
@@ -67,6 +70,7 @@ public class Ship : MonoBehaviour, IDamageable
 
     [Header("Audio")]
     [SerializeField] private AudioClip shootClip;
+    [SerializeField] private AudioClip noAmmoClip;
     [SerializeField] private AudioClip explosionClip;
     #endregion
 
@@ -91,6 +95,7 @@ public class Ship : MonoBehaviour, IDamageable
 
     #region Events
     // Events
+    public event System.Action<int> OnShoot;
     public event System.Action<int> OnEntityDamaged;
     public event System.Action<IDamageable> OnEntityKilled;
     #endregion
@@ -98,6 +103,11 @@ public class Ship : MonoBehaviour, IDamageable
 
 
     #region MonoBehaviour Methods
+    private void Start()
+    {
+        ammoCount = maxAmmo;
+    }
+
     // Update is called once per frame
     private void Update()
     {
@@ -107,6 +117,15 @@ public class Ship : MonoBehaviour, IDamageable
     #endregion
 
     #region Custom Methods
+    public int GetAmmoCount()
+    {
+        return ammoCount;
+    }
+    public int GetMaxAmmoCount()
+    {
+        return maxAmmo;
+    }
+
     public void UpdateMoveInput(InputAction.CallbackContext input)
     {
         // Get Player Input
@@ -118,6 +137,11 @@ public class Ship : MonoBehaviour, IDamageable
     public void UpdateShootInput(InputAction.CallbackContext input)
     {
         doShoot = input.ReadValueAsButton();
+
+        if (input.performed && ammoCount == 0)
+        {
+            AudioManager.Instance?.PlayOneShotClip(noAmmoClip);
+        }
     }
     public void UpdateThrusterInput(InputAction.CallbackContext input)
     {
@@ -145,10 +169,13 @@ public class Ship : MonoBehaviour, IDamageable
     }
     private void Shoot()
     {
-        if (doShoot)
+        if (doShoot && ammoCount != 0)
         {
             if (Time.time >= fireRateTimer)
             {
+                // Subtract laser
+                ammoCount--;
+
                 // Update timer
                 fireRateTimer = Time.time + fireRate;
 
@@ -161,6 +188,9 @@ public class Ship : MonoBehaviour, IDamageable
                 {
                     lasersToIgnore[i].gameObject.layer = gameObject.layer;
                 }
+
+                // Invoke event
+                OnShoot?.Invoke(ammoCount);
 
                 // Play Shoot soundclip
                 AudioManager.Instance?.PlayOneShotClip(shootClip);
@@ -282,6 +312,7 @@ public class Ship : MonoBehaviour, IDamageable
         shipCollider.enabled = true;
         invincibilityCoroutine = null;
     }
+
 
     public void TakeDamage(int damageToTake)
     {
