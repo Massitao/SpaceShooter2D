@@ -103,7 +103,7 @@ public class Ship : MonoBehaviour, IDamageable
 
 
     #region MonoBehaviour Methods
-    private void Start()
+    private void Awake()
     {
         ammoCount = maxAmmo;
     }
@@ -261,12 +261,15 @@ public class Ship : MonoBehaviour, IDamageable
                 break;
 
             case PowerUp.Type.Shield:
-                shieldHealth = 0;
-                shieldActive = false;
+                if (shieldActive)
+                {
+                    shieldHealth = 0;
+                    shieldActive = false;
 
-                shieldAnim.gameObject.SetActive(shieldActive);
+                    shieldAnim.SetInteger(shieldAnim_HealthHash, shieldHealth);
+                    shieldAnim.gameObject.SetActive(shieldActive);
+                }
 
-                shieldAnim.SetInteger(shieldAnim_HealthHash, shieldHealth);
                 break;
         }
     }
@@ -367,7 +370,6 @@ public class Ship : MonoBehaviour, IDamageable
         StopPowerUp(PowerUp.Type.TripleShot);
         StopPowerUp(PowerUp.Type.Speed);
         StopPowerUp(PowerUp.Type.Shield);
-
         StopInvincibility();
 
         Instantiate(explosion, transform.position, Quaternion.identity);
