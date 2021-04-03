@@ -19,8 +19,8 @@ public class Asteroid : MonoBehaviour, IDamageable
 
     #region Events
     // Events
-    public System.Action<int> OnEntityDamaged { get; set; }
-    public System.Action<IDamageable> OnEntityKilled { get; set; }
+    public event System.Action<int> OnEntityDamaged;
+    public event System.Action<IDamageable> OnEntityKilled;
     #endregion
     #endregion
 
@@ -62,6 +62,7 @@ public class Asteroid : MonoBehaviour, IDamageable
 
     public void TakeDamage(int damageToTake)
     {
+        OnEntityDamaged?.Invoke(0);
         Death();
     }
     public void Death()

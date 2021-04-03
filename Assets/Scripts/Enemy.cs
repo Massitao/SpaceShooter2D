@@ -28,11 +28,7 @@ public class Enemy : MonoBehaviour, IDamageable
     [SerializeField] private Vector3 laserSpawnOffset;
     [SerializeField] private float fireRate = .5f;
     private float fireRateTimer;
-
-    [SerializeField] private LayerMask laserInstantiator;
-
     private bool isVisible;
-
 
     [Header("Score")]
     [SerializeField] private int scoreToGive;
@@ -44,8 +40,8 @@ public class Enemy : MonoBehaviour, IDamageable
 
     #region Events
     // Events
-    public System.Action<int> OnEntityDamaged { get; set; }
-    public System.Action<IDamageable> OnEntityKilled { get; set; }
+    public event System.Action<int> OnEntityDamaged;
+    public event System.Action<IDamageable> OnEntityKilled;
     #endregion
     #endregion
 

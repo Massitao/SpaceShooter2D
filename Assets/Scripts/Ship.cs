@@ -43,13 +43,11 @@ public class Ship : MonoBehaviour, IDamageable
     [SerializeField] private int entityHealth;
     public int EntityHealth { get { return entityHealth; } set { entityHealth = value; } }
 
+    [Header("Ship Explosion")]
     [SerializeField] private GameObject explosion;
-    [SerializeField] private AudioClip explosionClip;
-
 
     [Header("Ship Move")]
     [SerializeField] private float shipSpeed = 3f;
-
 
     [Header("Ship Shoot")]
     [SerializeField] private GameObject laserPrefab;
@@ -57,14 +55,14 @@ public class Ship : MonoBehaviour, IDamageable
     [SerializeField] private float fireRate = .5f;
     private float fireRateTimer;
 
-    [SerializeField] private LayerMask laserInstantiator;
-
-    [SerializeField] private AudioClip shootClip;
-
     [Header("Ship Invincibility")]
     private WaitForSeconds invincibilityDuration = new WaitForSeconds(2f);
     private Coroutine invincibilityCoroutine;
     private bool invincible => invincibilityCoroutine != null;
+
+    [Header("Audio")]
+    [SerializeField] private AudioClip shootClip;
+    [SerializeField] private AudioClip explosionClip;
     #endregion
 
     #region PowerUps
@@ -88,8 +86,8 @@ public class Ship : MonoBehaviour, IDamageable
 
     #region Events
     // Events
-    public System.Action<int> OnEntityDamaged { get; set; }
-    public System.Action<IDamageable> OnEntityKilled { get; set; }
+    public event System.Action<int> OnEntityDamaged;
+    public event System.Action<IDamageable> OnEntityKilled;
     #endregion
     #endregion
 

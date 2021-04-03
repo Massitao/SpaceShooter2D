@@ -1,8 +1,8 @@
 ﻿public interface IDamageable
 {
     int EntityHealth { get; set; }
-    System.Action<int> OnEntityDamaged { get; set; }
-    System.Action<IDamageable> OnEntityKilled { get; set; }
+    event System.Action<int> OnEntityDamaged;
+    event System.Action<IDamageable> OnEntityKilled;
 
     void TakeDamage(int damageToTake);
     void Death();
