@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class Ship : MonoBehaviour, IDamageable
 {
@@ -7,6 +8,7 @@ public class Ship : MonoBehaviour, IDamageable
     #region Components
     [Header("Components")]
     [SerializeField] private Collider2D     shipCollider;
+    [SerializeField] private PlayerInput    shipInput;
     [SerializeField] private Animator       shipAnim;
 
     [Header("Child Components")]
@@ -33,6 +35,7 @@ public class Ship : MonoBehaviour, IDamageable
     #region Input Values
     [Header("Inputs")]
     private Vector2 moveInput;
+    private bool doShoot;
     #endregion
 
     #region Ship Properties
@@ -40,8 +43,13 @@ public class Ship : MonoBehaviour, IDamageable
     [SerializeField] private int entityHealth;
     public int EntityHealth { get { return entityHealth; } set { entityHealth = value; } }
 
+    [SerializeField] private GameObject explosion;
+    [SerializeField] private AudioClip explosionClip;
+
+
     [Header("Ship Move")]
     [SerializeField] private float shipSpeed = 3f;
+
 
     [Header("Ship Shoot")]
     [SerializeField] private GameObject laserPrefab;
@@ -49,7 +57,14 @@ public class Ship : MonoBehaviour, IDamageable
     [SerializeField] private float fireRate = .5f;
     private float fireRateTimer;
 
+    [SerializeField] private LayerMask laserInstantiator;
+
     [SerializeField] private AudioClip shootClip;
+
+    [Header("Ship Invincibility")]
+    private WaitForSeconds invincibilityDuration = new WaitForSeconds(2f);
+    private Coroutine invincibilityCoroutine;
+    private bool invincible => invincibilityCoroutine != null;
     #endregion
 
     #region PowerUps
@@ -83,20 +98,23 @@ public class Ship : MonoBehaviour, IDamageable
     // Update is called once per frame
     private void Update()
     {
-        UpdateInput();
         Move();
         Shoot();
     }
     #endregion
 
     #region Custom Methods
-    private void UpdateInput()
+    public void UpdateMoveInput(InputAction.CallbackContext input)
     {
         // Get Player Input
-        moveInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+        moveInput = input.ReadValue<Vector2>();
 
         // Update Ship Move Animations
         shipAnim.SetFloat(shipAnim_InputHash, moveInput.x);
+    }
+    public void UpdateShootInput(InputAction.CallbackContext input)
+    {
+        doShoot = input.ReadValueAsButton();
     }
 
     private void Move()
@@ -116,7 +134,7 @@ public class Ship : MonoBehaviour, IDamageable
     }
     private void Shoot()
     {
-        if (Input.GetKey(KeyCode.Space))
+        if (doShoot)
         {
             if (Time.time >= fireRateTimer)
             {
@@ -127,10 +145,10 @@ public class Ship : MonoBehaviour, IDamageable
                 GameObject laserType = tripleLaserActive ? tripleLaserPrefab : laserPrefab;
 
                 // Ignore own lasers
-                Collider2D[] lasersToIgnore = Instantiate(laserType, transform.position + laserSpawnOffset, Quaternion.identity).GetComponentsInChildren<Collider2D>();
+                Transform[] lasersToIgnore = Instantiate(laserType, transform.position + laserSpawnOffset, Quaternion.identity).GetComponentsInChildren<Transform>();
                 for (int i = 0; i < lasersToIgnore.Length; i++)
                 {
-                    Physics2D.IgnoreCollision(shipCollider, lasersToIgnore[i], true);
+                    lasersToIgnore[i].gameObject.layer = gameObject.layer;
                 }
 
                 // Play Shoot soundclip
@@ -232,33 +250,62 @@ public class Ship : MonoBehaviour, IDamageable
         shieldCoroutine = null;
     }
 
+    private void ActivateInvincibility()
+    {
+        if (invincibilityCoroutine != null)
+        {
+            StopCoroutine(invincibilityCoroutine);
+        }
+
+        invincibilityCoroutine = StartCoroutine(InvincibilityDuration());
+    }
+    private void StopInvincibility()
+    {
+        if (invincibilityCoroutine != null)
+        {
+            StopCoroutine(invincibilityCoroutine);
+            invincibilityCoroutine = null;
+        }
+    }
+    private IEnumerator InvincibilityDuration()
+    {
+        yield return invincibilityDuration;
+        invincibilityCoroutine = null;
+    }
+
     public void TakeDamage(int damageToTake)
     {
         if (shieldActive)
         {
             StopPowerUp(PowerUp.Type.Shield);
+            ActivateInvincibility();
             return;
         }
 
+        if (invincible) return;
+
         EntityHealth -= damageToTake;
         EntityHealth = Mathf.Clamp(EntityHealth, 0, 100);
+        ActivateInvincibility();
+
         OnEntityDamaged?.Invoke(EntityHealth);
 
         switch (entityHealth)
         {
             case 2:
                 leftEngineAnim.SetTrigger(engineAnim_HurtHash);
+                AudioManager.Instance?.PlayOneShotClip(explosionClip);
                 break;
 
             case 1:
                 leftEngineAnim.SetTrigger(engineAnim_HurtHash);
                 rightEngineAnim.SetTrigger(engineAnim_HurtHash);
+                AudioManager.Instance?.PlayOneShotClip(explosionClip);
                 break;
-        }
 
-        if (EntityHealth == 0)
-        {
-            Death();
+            case 0:
+                Death();
+                break;
         }
     }
     public void Death()
@@ -268,6 +315,10 @@ public class Ship : MonoBehaviour, IDamageable
         StopPowerUp(PowerUp.Type.TripleShot);
         StopPowerUp(PowerUp.Type.Speed);
         StopPowerUp(PowerUp.Type.Shield);
+
+        StopInvincibility();
+
+        Instantiate(explosion, transform.position, Quaternion.identity);
 
         Destroy(gameObject);
     }

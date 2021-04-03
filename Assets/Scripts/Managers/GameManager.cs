@@ -31,19 +31,14 @@ public class GameManager : MonoSingleton<GameManager>
     {
         AddScore(0);
     }
-
-    private void Update()
-    {
-        RestartLevel();
-    }
     #endregion
 
     #region Custom Methods
-    private void RestartLevel()
+    public void RestartLevel(UnityEngine.InputSystem.InputAction.CallbackContext input)
     {
         if (isGameOver)
         {
-            if (Input.GetKeyDown(KeyCode.R))
+            if (input.performed)
             {
                 LevelManager.Instance.LoadScene(SpaceShooterData.Levels.GameScene);
             }
@@ -59,6 +54,10 @@ public class GameManager : MonoSingleton<GameManager>
     {
         isGameOver = true;
         SpawnManager.Instance?.StopAllSpawns();
+    }
+    public bool IsGameOver()
+    {
+        return isGameOver;
     }
     #endregion
 }

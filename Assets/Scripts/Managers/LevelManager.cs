@@ -8,11 +8,11 @@ public class LevelManager : MonoSingleton<LevelManager>
         DontDestroyOnLoad(gameObject);
     }
 
-    private void Update()
+    public void QuitGame(UnityEngine.InputSystem.InputAction.CallbackContext input)
     {
-        if (Input.GetKeyDown(KeyCode.T))
+        if (input.performed)
         {
-            LoadScene(SpaceShooterData.Levels.MainMenuScene);
+            Application.Quit();
         }
     }
 

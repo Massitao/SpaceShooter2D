@@ -23,10 +23,22 @@ public class Enemy : MonoBehaviour, IDamageable
 
     [SerializeField] private float enemySpeed = 4f;
 
+    [Header("Enemy Shoot")]
+    [SerializeField] private GameObject laserPrefab;
+    [SerializeField] private Vector3 laserSpawnOffset;
+    [SerializeField] private float fireRate = .5f;
+    private float fireRateTimer;
+
+    [SerializeField] private LayerMask laserInstantiator;
+
+    private bool isVisible;
+
+
     [Header("Score")]
     [SerializeField] private int scoreToGive;
 
     [Header("Audio")]
+    [SerializeField] private AudioClip shootClip;
     [SerializeField] private AudioClip explosionClip;
     #endregion
 
@@ -43,6 +55,16 @@ public class Enemy : MonoBehaviour, IDamageable
     private void Update()
     {
         Move();
+        Shoot();
+    }
+
+    private void OnBecameVisible()
+    {
+        isVisible = true;
+    }
+    private void OnBecameInvisible()
+    {
+        isVisible = false;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -65,6 +87,32 @@ public class Enemy : MonoBehaviour, IDamageable
         if (transform.position.y <= SpaceShooterData.EnemyBoundLimitsY.x)
         {
             transform.position = new Vector3(Random.Range(-SpaceShooterData.EnemySpawnX, SpaceShooterData.EnemySpawnX), SpaceShooterData.EnemyBoundLimitsY.y, transform.position.z);
+        }
+    }
+    private void Shoot()
+    {
+        if (GameManager.Instance != null)
+        {
+            if (GameManager.Instance.IsGameOver()) return;
+        }
+
+        if (isVisible && enemyCol.enabled)
+        {
+            if (Time.time >= fireRateTimer)
+            {
+                // Update timer
+                fireRateTimer = Time.time + fireRate;
+
+                // Ignore own lasers
+                Transform[] lasersToIgnore = Instantiate(laserPrefab, transform.position + laserSpawnOffset, Quaternion.identity).GetComponentsInChildren<Transform>();
+                for (int i = 0; i < lasersToIgnore.Length; i++)
+                {
+                    lasersToIgnore[i].gameObject.layer = gameObject.layer;
+                }
+
+                // Play Shoot soundclip
+                AudioManager.Instance?.PlayOneShotClip(shootClip);
+            }
         }
     }
 

@@ -8,6 +8,7 @@ public class Asteroid : MonoBehaviour, IDamageable
     [SerializeField] private float asteroidMoveSpeed = 2f;
     [SerializeField] private float asteroidRotateAnglePerSecond = 5f;
     [SerializeField] private GameObject explosionPrefab;
+    private bool inverseSpin;
 
     [HideInInspector] private int entityHealth;
     public int EntityHealth { get { return entityHealth; } set { entityHealth = value; } }
@@ -25,6 +26,12 @@ public class Asteroid : MonoBehaviour, IDamageable
 
 
     #region MonoBehaviour Methods
+    void Start()
+    {
+        inverseSpin = Random.value >= .5f;
+        asteroidRotateAnglePerSecond *= inverseSpin ? -1f : 1f;
+    }
+
     // Update is called once per frame
     void Update()
     {

@@ -215,6 +215,7 @@ GameObject:
   - component: {fileID: 6656859240381426971}
   - component: {fileID: 7222636168036227812}
   - component: {fileID: 7222636168036227815}
+  - component: {fileID: -3393090697176706145}
   - component: {fileID: 7222636168036227811}
   m_Layer: 9
   m_Name: Ship
@@ -357,6 +358,115 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &-3393090697176706145
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7222636168036227808}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Actions: {fileID: -944628639613478452, guid: 24fcd6c0431982c44b30b74cb9a8aa81,
+    type: 3}
+  m_NotificationBehavior: 2
+  m_UIInputModule: {fileID: 0}
+  m_DeviceLostEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_DeviceRegainedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ControlsChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ActionEvents:
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 7222636168036227811}
+        m_MethodName: UpdateMoveInput
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 45ec388d-ee80-4c99-a276-3ec64798c15a
+    m_ActionName: Player/Move[/Keyboard/w,/Keyboard/upArrow,/Keyboard/s,/Keyboard/downArrow,/Keyboard/a,/Keyboard/leftArrow,/Keyboard/d,/Keyboard/rightArrow]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 7222636168036227811}
+        m_MethodName: UpdateShootInput
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: d8eef541-0f4e-4a4e-a07e-6a55e2dfd295
+    m_ActionName: Player/Fire[/Mouse/leftButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: c0901e4f-20b4-4a04-96ee-ce4e947a69d2
+    m_ActionName: UI/Navigate[/Keyboard/w,/Keyboard/upArrow,/Keyboard/s,/Keyboard/downArrow,/Keyboard/a,/Keyboard/leftArrow,/Keyboard/d,/Keyboard/rightArrow]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 6178fb8c-3b55-4901-9fba-512ac0fde8ba
+    m_ActionName: UI/Submit[/Keyboard/enter]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 17e3c0dd-2ae4-4dca-8f81-a39bb7b84bdb
+    m_ActionName: UI/Cancel[/Keyboard/escape]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: f4ed333e-660a-455a-8250-487f5bddd703
+    m_ActionName: UI/Point[/Mouse/position]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: e6441239-98ad-45fc-be5b-e61a7ece0f37
+    m_ActionName: UI/Click[/Mouse/leftButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 764cf994-e67d-429d-b94c-1db190c7ea52
+    m_ActionName: UI/ScrollWheel[/Mouse/scroll]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: bde8b3eb-495b-42dc-b5ce-ae1c650ad4ea
+    m_ActionName: UI/MiddleClick[/Mouse/middleButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: c9f053fc-7b9e-46a0-b5e9-881a119c54c3
+    m_ActionName: UI/RightClick[/Mouse/rightButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 6b2a8422-df1e-421a-ba4b-47ce52f3337d
+    m_ActionName: UI/TrackedDevicePosition
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 95a5ca0b-e1d5-4fa1-b040-053bc9169204
+    m_ActionName: UI/TrackedDeviceOrientation
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 9745926b-f7c3-474a-92bb-4973dc5e19f6
+    m_ActionName: Game/Quit[/Keyboard/escape]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: aeae7128-3232-4c0d-bfc6-3bf2e4f181c8
+    m_ActionName: Game/RestartLevel[/Keyboard/r]
+  m_NeverAutoSwitchControlSchemes: 0
+  m_DefaultControlScheme: 
+  m_DefaultActionMap: Player
+  m_SplitScreenIndex: -1
+  m_Camera: {fileID: 0}
 --- !u!114 &7222636168036227811
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -370,6 +480,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shipCollider: {fileID: 7222636168036227812}
+  shipInput: {fileID: -3393090697176706145}
   shipAnim: {fileID: 6656859240381426971}
   leftEngineAnim: {fileID: 5543819031825899737}
   rightEngineAnim: {fileID: 2893671305033525445}
@@ -378,13 +489,17 @@ MonoBehaviour:
   engineAnim_Hurt: EngineHurt
   shieldAnim_Active: ShieldActive
   entityHealth: 3
+  explosion: {fileID: 3420214906567672560, guid: 9f7042ea233eef1428062a583c81ce52,
+    type: 3}
+  explosionClip: {fileID: 8300000, guid: a885c043fab7e46438bba03ba9dab6bc, type: 3}
   shipSpeed: 8
-  wrapMoveBoundsX: 16.4
-  moveBoundsY: {x: -6.5, y: 7.75}
   laserPrefab: {fileID: 2716096619162409450, guid: e6d94afe478a45148ab7019023453c26,
     type: 3}
   laserSpawnOffset: {x: 0, y: 0.6, z: 0}
   fireRate: 0.2
+  laserInstantiator:
+    serializedVersion: 2
+    m_Bits: 512
   shootClip: {fileID: 8300000, guid: 75676f361bdfeaf41a46623e95df3dbc, type: 3}
   tripleLaserPrefab: {fileID: 8347454820370703129, guid: 08b6f497d6c3cac43b0520072905dbf4,
     type: 3}

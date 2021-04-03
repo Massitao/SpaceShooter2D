@@ -5,13 +5,20 @@ public class SpawnManager : MonoSingleton<SpawnManager>
 {
     #region Variables
     // Shared Spawner Properties
-    private enum SpawnEntity { Enemy, PowerUp }
-    private WaitForSeconds spawnRate = new WaitForSeconds(5f);
+    private enum SpawnEntity { Enemy, Asteroid, PowerUp }
+    private WaitForSeconds enemySpawnRate = new WaitForSeconds(2f);
+    private WaitForSeconds asteroidSpawnRate = new WaitForSeconds(5f);
+    private WaitForSeconds powerUpSpawnRate = new WaitForSeconds(10f);
 
 
     [Header("Enemy Spawner")]
     [SerializeField] private GameObject enemyPrefab;
     private Coroutine enemyRespawnCoroutine;
+
+
+    [Header("Enemy Spawner")]
+    [SerializeField] private GameObject asteroidPrefab;
+    private Coroutine asteroidRespawnCoroutine;
 
 
     [Header("PowerUp Spawner")]
@@ -25,6 +32,7 @@ public class SpawnManager : MonoSingleton<SpawnManager>
     private void Start()
     {
         StartEntitySpawn(SpawnEntity.Enemy);
+        StartEntitySpawn(SpawnEntity.Asteroid);
         StartEntitySpawn(SpawnEntity.PowerUp);
     }
     #endregion
@@ -38,6 +46,14 @@ public class SpawnManager : MonoSingleton<SpawnManager>
                 if (enemyRespawnCoroutine == null)
                 {
                     enemyRespawnCoroutine = StartCoroutine(SpawnEnemy());
+                }
+
+                break;
+
+            case SpawnEntity.Asteroid:
+                if (asteroidRespawnCoroutine == null)
+                {
+                    asteroidRespawnCoroutine = StartCoroutine(SpawnAsteroid());
                 }
 
                 break;
@@ -64,6 +80,15 @@ public class SpawnManager : MonoSingleton<SpawnManager>
 
                 break;
 
+            case SpawnEntity.Asteroid:
+                if (asteroidRespawnCoroutine != null)
+                {
+                    StopCoroutine(asteroidRespawnCoroutine);
+                    asteroidRespawnCoroutine = null;
+                }
+
+                break;
+
             case SpawnEntity.PowerUp:
                 if (powerUpRespawnCoroutine != null)
                 {
@@ -77,6 +102,7 @@ public class SpawnManager : MonoSingleton<SpawnManager>
     public void StopAllSpawns()
     {
         StopEntitySpawn(SpawnEntity.Enemy);
+        StopEntitySpawn(SpawnEntity.Asteroid);
         StopEntitySpawn(SpawnEntity.PowerUp);
     }
 
@@ -84,19 +110,31 @@ public class SpawnManager : MonoSingleton<SpawnManager>
     {
         while (true)
         {
+            yield return enemySpawnRate;
+
             GameObject newEnemy = Instantiate(enemyPrefab, new Vector3(Random.Range(-SpaceShooterData.EnemySpawnX, SpaceShooterData.EnemySpawnX), SpaceShooterData.EnemyBoundLimitsY.y, 0f), Quaternion.identity);
             newEnemy.transform.SetParent(transform);
-            yield return spawnRate;
+        }
+    }
+    private IEnumerator SpawnAsteroid()
+    {
+        while (true)
+        {
+            yield return asteroidSpawnRate;
+
+            GameObject newEnemy = Instantiate(asteroidPrefab, new Vector3(Random.Range(-SpaceShooterData.EnemySpawnX, SpaceShooterData.EnemySpawnX), SpaceShooterData.EnemyBoundLimitsY.y, 0f), Quaternion.identity);
+            newEnemy.transform.SetParent(transform);
         }
     }
     private IEnumerator SpawnPowerUp()
     {
         while (true)
         {
+            yield return powerUpSpawnRate;
+
             PowerUp newPowerUp = Instantiate(powerUpPrefab, new Vector3(Random.Range(-SpaceShooterData.EnemySpawnX * .9f, SpaceShooterData.EnemySpawnX * .9f), SpaceShooterData.EnemyBoundLimitsY.y, 0f), Quaternion.identity).GetComponent<PowerUp>();
             int randomPowerUp = Random.Range(0, System.Enum.GetNames(typeof(PowerUp.Type)).Length);
             newPowerUp.SetPowerupType((PowerUp.Type)randomPowerUp);
-            yield return spawnRate;
         }
     }
     #endregion
