@@ -247,10 +247,8 @@ MonoBehaviour:
   laserPrefab: {fileID: 1971429254928403016, guid: 6d13b61ee7293974788d15611405f0b6,
     type: 3}
   laserSpawnOffset: {x: 0, y: 0, z: 0}
-  fireRate: 2
-  laserInstantiator:
-    serializedVersion: 2
-    m_Bits: 1024
+  fireRate: {x: 1, y: 4}
+  isVisible: 0
   scoreToGive: 10
   shootClip: {fileID: 8300000, guid: 75676f361bdfeaf41a46623e95df3dbc, type: 3}
   explosionClip: {fileID: 8300000, guid: a885c043fab7e46438bba03ba9dab6bc, type: 3}

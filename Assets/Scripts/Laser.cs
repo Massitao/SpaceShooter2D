@@ -33,7 +33,7 @@ public class Laser : MonoBehaviour
         transform.Translate(Vector3.up * laserSpeed * Time.deltaTime, Space.Self);
 
         // If Laser is out of bounds
-        if (transform.position.y <= SpaceShooterData.EnemyBoundLimitsY.x || transform.position.y >= SpaceShooterData.EnemyBoundLimitsY.y)
+        if (transform.position.y <= SpaceShooterData.LaserBoundLimitsY.x || transform.position.y >= SpaceShooterData.LaserBoundLimitsY.y)
         {
             // If there's a parent, destroy it
             if (transform.parent != null)

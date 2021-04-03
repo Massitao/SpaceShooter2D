@@ -26,9 +26,9 @@ public class Enemy : MonoBehaviour, IDamageable
     [Header("Enemy Shoot")]
     [SerializeField] private GameObject laserPrefab;
     [SerializeField] private Vector3 laserSpawnOffset;
-    [SerializeField] private float fireRate = .5f;
+    [SerializeField] private Vector2 fireRate = new Vector2(2f, 4f);
     private float fireRateTimer;
-    private bool isVisible;
+    [SerializeField] private bool isVisible;
 
     [Header("Score")]
     [SerializeField] private int scoreToGive;
@@ -57,6 +57,7 @@ public class Enemy : MonoBehaviour, IDamageable
     private void OnBecameVisible()
     {
         isVisible = true;
+        fireRateTimer = Time.time + Random.Range(fireRate.x, fireRate.y) * Random.Range(0f, .4f);
     }
     private void OnBecameInvisible()
     {
@@ -97,7 +98,7 @@ public class Enemy : MonoBehaviour, IDamageable
             if (Time.time >= fireRateTimer)
             {
                 // Update timer
-                fireRateTimer = Time.time + fireRate;
+                fireRateTimer = Time.time + Random.Range(fireRate.x, fireRate.y);
 
                 // Ignore own lasers
                 Transform[] lasersToIgnore = Instantiate(laserPrefab, transform.position + laserSpawnOffset, Quaternion.identity).GetComponentsInChildren<Transform>();

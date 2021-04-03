@@ -23,6 +23,9 @@ public class Ship : MonoBehaviour, IDamageable
     [SerializeField] private string shipAnim_Input;
     private int shipAnim_InputHash => Animator.StringToHash(shipAnim_Input);
 
+    [SerializeField] private string shipAnim_Invincibility;
+    private int shipAnim_InvincibilityHash => Animator.StringToHash(shipAnim_Invincibility);
+
     // ENGINES
     [SerializeField] private string engineAnim_Hurt;
     private int engineAnim_HurtHash => Animator.StringToHash(engineAnim_Hurt);
@@ -36,6 +39,7 @@ public class Ship : MonoBehaviour, IDamageable
     [Header("Inputs")]
     private Vector2 moveInput;
     private bool doShoot;
+    private bool isThrusting;
     #endregion
 
     #region Ship Properties
@@ -47,12 +51,13 @@ public class Ship : MonoBehaviour, IDamageable
     [SerializeField] private GameObject explosion;
 
     [Header("Ship Move")]
-    [SerializeField] private float shipSpeed = 3f;
+    [SerializeField] private float shipSpeed = 8f;
+    [SerializeField] private float shipThrusterSpeed = 10f;
 
     [Header("Ship Shoot")]
     [SerializeField] private GameObject laserPrefab;
     [SerializeField] private Vector3 laserSpawnOffset;
-    [SerializeField] private float fireRate = .5f;
+    [SerializeField] private float fireRate = .2f;
     private float fireRateTimer;
 
     [Header("Ship Invincibility")]
@@ -114,12 +119,20 @@ public class Ship : MonoBehaviour, IDamageable
     {
         doShoot = input.ReadValueAsButton();
     }
+    public void UpdateThrusterInput(InputAction.CallbackContext input)
+    {
+        isThrusting = input.ReadValueAsButton();
+    }
 
     private void Move()
     {
-        // If Extra Speed Power-up is active, apply extra speed. Else, keep normal ship speed
-        float speedToApply = extraSpeedActive ? shipSpeed * extraSpeedMultiplier : shipSpeed;
-        transform.Translate(moveInput * speedToApply * Time.deltaTime);
+        // If Player is using the Thrusters, apply Thruster speed. Else, keep normal ship speed
+        float selectedSpeed = isThrusting ? shipThrusterSpeed : shipSpeed;
+
+        // If Extra Speed Power-up is active, apply extra speed. Else, keep selected Speed
+        selectedSpeed *= extraSpeedActive ? extraSpeedMultiplier : 1f;
+
+        transform.Translate(moveInput * selectedSpeed * Time.deltaTime);
 
         // Wrap ship around X axis
         if (Mathf.Abs(transform.position.x) > SpaceShooterData.PlayerStartWrapX)
@@ -263,11 +276,18 @@ public class Ship : MonoBehaviour, IDamageable
         {
             StopCoroutine(invincibilityCoroutine);
             invincibilityCoroutine = null;
+
+            shipCollider.enabled = true;
         }
     }
     private IEnumerator InvincibilityDuration()
     {
+        shipAnim.SetTrigger(shipAnim_InvincibilityHash);
+        shipCollider.enabled = false;
+
         yield return invincibilityDuration;
+
+        shipCollider.enabled = true;
         invincibilityCoroutine = null;
     }
 

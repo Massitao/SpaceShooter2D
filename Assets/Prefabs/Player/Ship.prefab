@@ -462,6 +462,21 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: aeae7128-3232-4c0d-bfc6-3bf2e4f181c8
     m_ActionName: Game/RestartLevel[/Keyboard/r]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 7222636168036227811}
+        m_MethodName: UpdateThrusterInput
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 393706ac-b34f-44bf-8bdb-681d5308d2ec
+    m_ActionName: Player/Thruster[/Keyboard/leftShift]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -486,24 +501,23 @@ MonoBehaviour:
   rightEngineAnim: {fileID: 2893671305033525445}
   shieldAnim: {fileID: 1749529917447679758}
   shipAnim_Input: InputX
+  shipAnim_Invincibility: Invincibility
   engineAnim_Hurt: EngineHurt
   shieldAnim_Active: ShieldActive
   entityHealth: 3
   explosion: {fileID: 3420214906567672560, guid: 9f7042ea233eef1428062a583c81ce52,
     type: 3}
-  explosionClip: {fileID: 8300000, guid: a885c043fab7e46438bba03ba9dab6bc, type: 3}
   shipSpeed: 8
+  shipThrusterSpeed: 12
   laserPrefab: {fileID: 2716096619162409450, guid: e6d94afe478a45148ab7019023453c26,
     type: 3}
   laserSpawnOffset: {x: 0, y: 0.6, z: 0}
   fireRate: 0.2
-  laserInstantiator:
-    serializedVersion: 2
-    m_Bits: 512
   shootClip: {fileID: 8300000, guid: 75676f361bdfeaf41a46623e95df3dbc, type: 3}
+  explosionClip: {fileID: 8300000, guid: a885c043fab7e46438bba03ba9dab6bc, type: 3}
   tripleLaserPrefab: {fileID: 8347454820370703129, guid: 08b6f497d6c3cac43b0520072905dbf4,
     type: 3}
-  extraSpeedMultiplier: 2
+  extraSpeedMultiplier: 1.5
 --- !u!1 &8840537540469043221
 GameObject:
   m_ObjectHideFlags: 0
