@@ -514,7 +514,7 @@ MonoBehaviour:
   laserSpawnOffset: {x: 0, y: 0.6, z: 0}
   fireRate: 0.2
   ammoCount: 0
-  maxAmmo: 15
+  maxAmmo: 30
   shootClip: {fileID: 8300000, guid: 75676f361bdfeaf41a46623e95df3dbc, type: 3}
   noAmmoClip: {fileID: 8300000, guid: e10fadab213e0194192930983f981d91, type: 3}
   explosionClip: {fileID: 8300000, guid: a885c043fab7e46438bba03ba9dab6bc, type: 3}

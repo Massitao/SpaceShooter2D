@@ -96,6 +96,7 @@ public class Ship : MonoBehaviour, IDamageable
     #region Events
     // Events
     public event System.Action<int> OnShoot;
+    public event System.Action<int> OnAmmoRefill;
     public event System.Action<int> OnEntityDamaged;
     public event System.Action<IDamageable> OnEntityKilled;
     #endregion
@@ -117,15 +118,8 @@ public class Ship : MonoBehaviour, IDamageable
     #endregion
 
     #region Custom Methods
-    public int GetAmmoCount()
-    {
-        return ammoCount;
-    }
-    public int GetMaxAmmoCount()
-    {
-        return maxAmmo;
-    }
 
+    #region Input
     public void UpdateMoveInput(InputAction.CallbackContext input)
     {
         // Get Player Input
@@ -147,6 +141,7 @@ public class Ship : MonoBehaviour, IDamageable
     {
         isThrusting = input.ReadValueAsButton();
     }
+    #endregion
 
     private void Move()
     {
@@ -198,6 +193,16 @@ public class Ship : MonoBehaviour, IDamageable
         }
     }
 
+    public int GetAmmoCount()
+    {
+        return ammoCount;
+    }
+    public int GetMaxAmmoCount()
+    {
+        return maxAmmo;
+    }
+
+    #region PowerUps
     /// <summary>
     /// Triggers a ship ability.
     /// </summary>
@@ -226,13 +231,11 @@ public class Ship : MonoBehaviour, IDamageable
                 break;
 
             case PowerUp.Type.Shield:
-                shieldHealth = 3;
-                shieldActive = true;
+                ActivateShield();
+                break;
 
-                shieldAnim.gameObject.SetActive(shieldActive);
-
-                shieldAnim.SetInteger(shieldAnim_HealthHash, shieldHealth);
-
+            case PowerUp.Type.Ammo:
+                RefillAmmo();
                 break;
         }
     }
@@ -261,15 +264,7 @@ public class Ship : MonoBehaviour, IDamageable
                 break;
 
             case PowerUp.Type.Shield:
-                if (shieldActive)
-                {
-                    shieldHealth = 0;
-                    shieldActive = false;
-
-                    shieldAnim.SetInteger(shieldAnim_HealthHash, shieldHealth);
-                    shieldAnim.gameObject.SetActive(shieldActive);
-                }
-
+                StopShield();
                 break;
         }
     }
@@ -285,6 +280,33 @@ public class Ship : MonoBehaviour, IDamageable
         extraSpeedCoroutine = null;
     }
 
+    private void ActivateShield()
+    {
+        shieldHealth = 3;
+        shieldActive = true;
+
+        shieldAnim.gameObject.SetActive(shieldActive);
+
+        shieldAnim.SetInteger(shieldAnim_HealthHash, shieldHealth);
+    }
+    private void StopShield()
+    {
+        if (shieldActive)
+        {
+            shieldHealth = 0;
+            shieldActive = false;
+
+            shieldAnim.SetInteger(shieldAnim_HealthHash, shieldHealth);
+            shieldAnim.gameObject.SetActive(shieldActive);
+        }
+    }
+
+    private void RefillAmmo()
+    {
+        ammoCount = maxAmmo;
+        OnAmmoRefill?.Invoke(ammoCount);
+    }
+    #endregion
 
     private void ActivateInvincibility()
     {
@@ -315,6 +337,8 @@ public class Ship : MonoBehaviour, IDamageable
         shipCollider.enabled = true;
         invincibilityCoroutine = null;
     }
+
+
 
 
     public void TakeDamage(int damageToTake)
@@ -350,19 +374,6 @@ public class Ship : MonoBehaviour, IDamageable
                 break;
         }
     }
-    private void ShieldTakeDamage(int damageToTake)
-    {
-        shieldHealth -= damageToTake;
-        shieldHealth = Mathf.Clamp(shieldHealth, 0, 3);
-
-        shieldAnim.SetInteger(shieldAnim_HealthHash, shieldHealth);
-
-        if (shieldHealth == 0)
-        {
-            StopPowerUp(PowerUp.Type.Shield);
-        }
-        ActivateInvincibility();
-    }
     public void Death()
     {
         OnEntityKilled?.Invoke(this);
@@ -375,6 +386,20 @@ public class Ship : MonoBehaviour, IDamageable
         Instantiate(explosion, transform.position, Quaternion.identity);
 
         Destroy(gameObject);
+    }
+
+    private void ShieldTakeDamage(int damageToTake)
+    {
+        shieldHealth -= damageToTake;
+        shieldHealth = Mathf.Clamp(shieldHealth, 0, 3);
+
+        shieldAnim.SetInteger(shieldAnim_HealthHash, shieldHealth);
+
+        if (shieldHealth == 0)
+        {
+            StopPowerUp(PowerUp.Type.Shield);
+        }
+        ActivateInvincibility();
     }
     #endregion
 }
