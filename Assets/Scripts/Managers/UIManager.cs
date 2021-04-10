@@ -33,15 +33,19 @@ public class UIManager : MonoSingleton<UIManager>
 
     private void OnEnable()
     {
+        playerShip.OnEntityHealed += UpdateLives;
+        playerShip.OnEntityDamaged += UpdateLives;
+
         playerShip.OnShoot += UpdateAmmoCount;
         playerShip.OnAmmoRefill += UpdateAmmoCount;
-        playerShip.OnEntityDamaged += UpdateLives;
     }
     private void OnDisable()
     {
+        playerShip.OnEntityHealed -= UpdateLives;
+        playerShip.OnEntityDamaged -= UpdateLives;
+
         playerShip.OnShoot -= UpdateAmmoCount;
         playerShip.OnAmmoRefill -= UpdateAmmoCount;
-        playerShip.OnEntityDamaged -= UpdateLives;
     }
 
     private void Start()

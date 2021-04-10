@@ -12,7 +12,7 @@ public class PowerUp : MonoBehaviour
 
     [Header("PowerUp Type")]
     [SerializeField] private Type type;
-    public enum Type { TripleShot, Speed, Shield, Ammo }
+    public enum Type { TripleShot, Speed, Shield, Life, Ammo }
 
     [Header("PowerUp Move")]
     [SerializeField] protected float speed = 3f;

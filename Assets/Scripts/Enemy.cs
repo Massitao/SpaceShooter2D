@@ -21,6 +21,9 @@ public class Enemy : MonoBehaviour, IDamageable
     [SerializeField] private int entityHealth;
     public int EntityHealth { get { return entityHealth; } set { entityHealth = value; } }
 
+    [SerializeField] private int entityMaxHealth;
+    public int EntityMaxHealth { get { return entityMaxHealth; } set { entityMaxHealth = value; } }
+
     [SerializeField] private float enemySpeed = 4f;
 
     [Header("Enemy Shoot")]
@@ -47,6 +50,11 @@ public class Enemy : MonoBehaviour, IDamageable
 
 
     #region MonoBehaviour Methods
+    private void Start()
+    {
+        entityHealth = entityMaxHealth;
+    }
+
     // Update is called once per frame
     private void Update()
     {

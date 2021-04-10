@@ -13,6 +13,9 @@ public class Asteroid : MonoBehaviour, IDamageable
     [HideInInspector] private int entityHealth;
     public int EntityHealth { get { return entityHealth; } set { entityHealth = value; } }
 
+    [HideInInspector] private int entityMaxHealth = 1;
+    public int EntityMaxHealth { get { return entityMaxHealth; } set { entityMaxHealth = value; } }
+
     [Header("Score")]
     [SerializeField] private int scoreToGive = 5;
     #endregion
@@ -26,8 +29,10 @@ public class Asteroid : MonoBehaviour, IDamageable
 
 
     #region MonoBehaviour Methods
-    void Start()
+    private void Start()
     {
+        entityHealth = entityMaxHealth;
+
         inverseSpin = Random.value >= .5f;
         asteroidRotateAnglePerSecond *= inverseSpin ? -1f : 1f;
     }

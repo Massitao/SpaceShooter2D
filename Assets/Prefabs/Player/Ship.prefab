@@ -502,9 +502,11 @@ MonoBehaviour:
   shieldAnim: {fileID: 1749529917447679758}
   shipAnim_Input: InputX
   shipAnim_Invincibility: Invincibility
+  engineAnim_Healed: EngineHealed
   engineAnim_Hurt: EngineHurt
   shieldAnim_Health: ShieldHealth
-  entityHealth: 3
+  entityHealth: 0
+  entityMaxHealth: 3
   explosion: {fileID: 3420214906567672560, guid: 9f7042ea233eef1428062a583c81ce52,
     type: 3}
   shipSpeed: 8

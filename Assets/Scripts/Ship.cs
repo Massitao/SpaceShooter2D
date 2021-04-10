@@ -47,6 +47,9 @@ public class Ship : MonoBehaviour, IDamageable
     [SerializeField] private int entityHealth;
     public int EntityHealth { get { return entityHealth; } set { entityHealth = value; } }
 
+    [SerializeField] private int entityMaxHealth = 3;
+    public int EntityMaxHealth { get { return entityMaxHealth; } set { entityMaxHealth = value; } }
+
     [Header("Ship Explosion")]
     [SerializeField] private GameObject explosion;
 
@@ -97,6 +100,7 @@ public class Ship : MonoBehaviour, IDamageable
     // Events
     public event System.Action<int> OnShoot;
     public event System.Action<int> OnAmmoRefill;
+    public event System.Action<int> OnEntityHealed;
     public event System.Action<int> OnEntityDamaged;
     public event System.Action<IDamageable> OnEntityKilled;
     #endregion
@@ -106,6 +110,7 @@ public class Ship : MonoBehaviour, IDamageable
     #region MonoBehaviour Methods
     private void Awake()
     {
+        entityHealth = entityMaxHealth;
         ammoCount = maxAmmo;
     }
 
@@ -118,7 +123,6 @@ public class Ship : MonoBehaviour, IDamageable
     #endregion
 
     #region Custom Methods
-
     #region Input
     public void UpdateMoveInput(InputAction.CallbackContext input)
     {
@@ -234,6 +238,10 @@ public class Ship : MonoBehaviour, IDamageable
                 ActivateShield();
                 break;
 
+            case PowerUp.Type.Life:
+                HealShip(1);
+                break;
+
             case PowerUp.Type.Ammo:
                 RefillAmmo();
                 break;
@@ -301,6 +309,16 @@ public class Ship : MonoBehaviour, IDamageable
         }
     }
 
+    private void HealShip(int ammountToHeal)
+    {
+        ammountToHeal = Mathf.Clamp(ammountToHeal, 0, EntityMaxHealth);
+        EntityHealth = Mathf.Clamp(EntityHealth + ammountToHeal, 0, EntityMaxHealth);
+
+        leftEngineAnim.SetBool(engineAnim_Hurt, EntityHealth < 3);
+        rightEngineAnim.SetBool(engineAnim_Hurt, EntityHealth < 2);
+
+        OnEntityHealed?.Invoke(EntityHealth);
+    }
     private void RefillAmmo()
     {
         ammoCount = maxAmmo;
@@ -339,8 +357,6 @@ public class Ship : MonoBehaviour, IDamageable
     }
 
 
-
-
     public void TakeDamage(int damageToTake)
     {
         if (shieldActive)
@@ -351,28 +367,21 @@ public class Ship : MonoBehaviour, IDamageable
         if (invincible) return;
 
         EntityHealth -= damageToTake;
-        EntityHealth = Mathf.Clamp(EntityHealth, 0, 100);
+        EntityHealth = Mathf.Clamp(EntityHealth, 0, EntityMaxHealth);
         ActivateInvincibility();
 
-        OnEntityDamaged?.Invoke(EntityHealth);
-
-        switch (entityHealth)
+        if (EntityHealth == 0)
         {
-            case 2:
-                leftEngineAnim.SetTrigger(engineAnim_HurtHash);
-                AudioManager.Instance?.PlayOneShotClip(explosionClip);
-                break;
-
-            case 1:
-                leftEngineAnim.SetTrigger(engineAnim_HurtHash);
-                rightEngineAnim.SetTrigger(engineAnim_HurtHash);
-                AudioManager.Instance?.PlayOneShotClip(explosionClip);
-                break;
-
-            case 0:
-                Death();
-                break;
+            Death();
         }
+        else
+        {
+            leftEngineAnim.SetBool(engineAnim_Hurt, EntityHealth < 3);
+            rightEngineAnim.SetBool(engineAnim_Hurt, EntityHealth < 2);
+        }
+
+        AudioManager.Instance?.PlayOneShotClip(explosionClip);
+        OnEntityDamaged?.Invoke(EntityHealth);
     }
     public void Death()
     {
