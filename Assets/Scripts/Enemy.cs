@@ -31,6 +31,8 @@ public class Enemy : MonoBehaviour, IDamageable
     [SerializeField] private Vector3 laserSpawnOffset;
     [SerializeField] private Vector2 fireRate = new Vector2(2f, 4f);
     private float fireRateTimer;
+
+    [SerializeField] [Range(0, 30)] private int enemyProjectileLayer;
     [SerializeField] private bool isVisible;
 
     [Header("Score")]
@@ -112,7 +114,7 @@ public class Enemy : MonoBehaviour, IDamageable
                 Transform[] lasersToIgnore = Instantiate(laserPrefab, transform.position + laserSpawnOffset, Quaternion.identity).GetComponentsInChildren<Transform>();
                 for (int i = 0; i < lasersToIgnore.Length; i++)
                 {
-                    lasersToIgnore[i].gameObject.layer = gameObject.layer;
+                    lasersToIgnore[i].gameObject.layer = enemyProjectileLayer;
                 }
 
                 // Play Shoot soundclip
@@ -139,10 +141,10 @@ public class Enemy : MonoBehaviour, IDamageable
 
         enemyAnim.SetTrigger(enemyAnim_DeathTriggerHash);
         enemyAudioSource.PlayOneShot(explosionClip);
+        GameManager.Instance?.AddScore(scoreToGive);
     }
     public void Death()
     {
-        GameManager.Instance?.AddScore(scoreToGive);
         OnEntityKilled?.Invoke(this);
         Destroy(gameObject);
     }

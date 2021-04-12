@@ -243,11 +243,13 @@ MonoBehaviour:
   enemyAudioSource: {fileID: 249818808768911342}
   enemyAnim_DeathTrigger: OnEnemyDeath
   entityHealth: 1
+  entityMaxHealth: 1
   enemySpeed: 6
   laserPrefab: {fileID: 1971429254928403016, guid: 6d13b61ee7293974788d15611405f0b6,
     type: 3}
   laserSpawnOffset: {x: 0, y: 0, z: 0}
   fireRate: {x: 1, y: 4}
+  enemyProjectileLayer: 12
   isVisible: 0
   scoreToGive: 10
   shootClip: {fileID: 8300000, guid: 75676f361bdfeaf41a46623e95df3dbc, type: 3}

@@ -66,6 +66,8 @@ public class Ship : MonoBehaviour, IDamageable
     [SerializeField] private int ammoCount;
     [SerializeField] private int maxAmmo;
 
+    [SerializeField] [Range(0, 30)] private int shipProjectileLayer;
+
     [Header("Ship Invincibility")]
     private WaitForSeconds invincibilityDuration = new WaitForSeconds(2f);
     private Coroutine invincibilityCoroutine;
@@ -79,12 +81,18 @@ public class Ship : MonoBehaviour, IDamageable
 
     #region PowerUps
     [Header("Abilities")]
+    [SerializeField] private int shootAbilityAmmoRefill = 10;
     private WaitForSeconds abilityDuration = new WaitForSeconds(5f);
 
     [Header("Triple Shoot")]
     [SerializeField] private GameObject tripleLaserPrefab;
     private Coroutine tripleShotCoroutine;
     private bool tripleLaserActive => tripleShotCoroutine != null;
+
+    [Header("Triple Shoot")]
+    [SerializeField] private GameObject heatSeekShotPrefab;
+    private Coroutine heatSeekShotCoroutine;
+    private bool heatSeekShotActive => heatSeekShotCoroutine != null;
 
     [Header("Extra Speed")]
     [SerializeField] [Range(1f, 3f)] private float extraSpeedMultiplier;
@@ -178,14 +186,16 @@ public class Ship : MonoBehaviour, IDamageable
                 // Update timer
                 fireRateTimer = Time.time + fireRate;
 
-                // Choose between Triple or Single laser
-                GameObject laserType = tripleLaserActive ? tripleLaserPrefab : laserPrefab;
+                // Choose between Triple, Heat Seek or Single laser
+                GameObject laserType = laserPrefab;
+                laserType = tripleLaserActive ? tripleLaserPrefab : laserType;
+                laserType = heatSeekShotActive ? heatSeekShotPrefab : laserType;
 
                 // Ignore own lasers
                 Transform[] lasersToIgnore = Instantiate(laserType, transform.position + laserSpawnOffset, Quaternion.identity).GetComponentsInChildren<Transform>();
                 for (int i = 0; i < lasersToIgnore.Length; i++)
                 {
-                    lasersToIgnore[i].gameObject.layer = gameObject.layer;
+                    lasersToIgnore[i].gameObject.layer = shipProjectileLayer;
                 }
 
                 // Invoke event
@@ -217,19 +227,23 @@ public class Ship : MonoBehaviour, IDamageable
         switch (powerup)
         {
             case PowerUp.Type.TripleShot:
-                if (tripleShotCoroutine != null)
-                {
-                    StopCoroutine(tripleShotCoroutine);
-                }
+                if (heatSeekShotCoroutine != null) StopPowerUp(PowerUp.Type.HeatSeek);
+                if (tripleShotCoroutine != null) StopPowerUp(PowerUp.Type.TripleShot);
 
                 tripleShotCoroutine = StartCoroutine(TripleShotDuration());
+                RefillAmmo(shootAbilityAmmoRefill);
+                break;
+
+            case PowerUp.Type.HeatSeek:
+                if (tripleShotCoroutine != null) StopPowerUp(PowerUp.Type.TripleShot);
+                if (heatSeekShotCoroutine != null) StopPowerUp(PowerUp.Type.HeatSeek);
+
+                heatSeekShotCoroutine = StartCoroutine(HeatSeekDuration());
+                RefillAmmo(shootAbilityAmmoRefill);
                 break;
 
             case PowerUp.Type.Speed:
-                if (extraSpeedCoroutine != null)
-                {
-                    StopCoroutine(extraSpeedCoroutine);
-                }
+                if (extraSpeedCoroutine != null) StopPowerUp(PowerUp.Type.TripleShot);
 
                 extraSpeedCoroutine = StartCoroutine(ExtraSpeedDuration());
                 break;
@@ -263,6 +277,14 @@ public class Ship : MonoBehaviour, IDamageable
                 }
                 break;
 
+            case PowerUp.Type.HeatSeek:
+                if (heatSeekShotCoroutine != null)
+                {
+                    StopCoroutine(heatSeekShotCoroutine);
+                    heatSeekShotCoroutine = null;
+                }
+                break;
+
             case PowerUp.Type.Speed:
                 if (extraSpeedCoroutine != null)
                 {
@@ -281,6 +303,11 @@ public class Ship : MonoBehaviour, IDamageable
     {
         yield return abilityDuration;
         tripleShotCoroutine = null;
+    }
+    private IEnumerator HeatSeekDuration()
+    {
+        yield return abilityDuration;
+        heatSeekShotCoroutine = null;
     }
     private IEnumerator ExtraSpeedDuration()
     {
@@ -322,6 +349,11 @@ public class Ship : MonoBehaviour, IDamageable
     private void RefillAmmo()
     {
         ammoCount = maxAmmo;
+        OnAmmoRefill?.Invoke(ammoCount);
+    }
+    private void RefillAmmo(int ammoToRefill)
+    {
+        ammoCount = Mathf.Clamp(ammoCount + ammoToRefill, 0, maxAmmo);
         OnAmmoRefill?.Invoke(ammoCount);
     }
     #endregion

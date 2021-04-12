@@ -134,6 +134,15 @@ public class SpawnManager : MonoSingleton<SpawnManager>
 
             PowerUp newPowerUp = Instantiate(powerUpPrefab, new Vector3(Random.Range(-SpaceShooterData.EnemySpawnX * .9f, SpaceShooterData.EnemySpawnX * .9f), SpaceShooterData.EnemyBoundLimitsY.y, 0f), Quaternion.identity).GetComponent<PowerUp>();
             int randomPowerUp = Random.Range(0, System.Enum.GetNames(typeof(PowerUp.Type)).Length);
+
+            if (randomPowerUp == (int)PowerUp.Type.HeatSeek)
+            {
+                if (Random.value > 0.5f)
+                {
+                    randomPowerUp = (int)PowerUp.Type.TripleShot;
+                }
+            }
+
             newPowerUp.SetPowerupType((PowerUp.Type)randomPowerUp);
         }
     }
