@@ -521,7 +521,7 @@ MonoBehaviour:
   noAmmoClip: {fileID: 8300000, guid: e10fadab213e0194192930983f981d91, type: 3}
   explosionClip: {fileID: 8300000, guid: a885c043fab7e46438bba03ba9dab6bc, type: 3}
   shootAbilityAmmoRefill: 15
-  tripleLaserPrefab: {fileID: 8347454820370703129, guid: 08b6f497d6c3cac43b0520072905dbf4,
+  tripleShotPrefab: {fileID: 8347454820370703129, guid: 08b6f497d6c3cac43b0520072905dbf4,
     type: 3}
   heatSeekShotPrefab: {fileID: 3607081831160039948, guid: e34c9ca3d32530d4799f084abe9394d5,
     type: 3}

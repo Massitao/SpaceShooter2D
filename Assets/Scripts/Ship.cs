@@ -50,12 +50,15 @@ public class Ship : MonoBehaviour, IDamageable
     [SerializeField] private int entityMaxHealth = 3;
     public int EntityMaxHealth { get { return entityMaxHealth; } set { entityMaxHealth = value; } }
 
+
     [Header("Ship Explosion")]
     [SerializeField] private GameObject explosion;
+
 
     [Header("Ship Move")]
     [SerializeField] private float shipSpeed = 8f;
     [SerializeField] private float shipThrusterSpeed = 10f;
+
 
     [Header("Ship Shoot")]
     [SerializeField] private GameObject laserPrefab;
@@ -68,10 +71,12 @@ public class Ship : MonoBehaviour, IDamageable
 
     [SerializeField] [Range(0, 30)] private int shipProjectileLayer;
 
+
     [Header("Ship Invincibility")]
     private WaitForSeconds invincibilityDuration = new WaitForSeconds(2f);
     private Coroutine invincibilityCoroutine;
     private bool invincible => invincibilityCoroutine != null;
+
 
     [Header("Audio")]
     [SerializeField] private AudioClip shootClip;
@@ -82,25 +87,35 @@ public class Ship : MonoBehaviour, IDamageable
     #region PowerUps
     [Header("Abilities")]
     [SerializeField] private int shootAbilityAmmoRefill = 10;
-    private WaitForSeconds abilityDuration = new WaitForSeconds(5f);
+
 
     [Header("Triple Shoot")]
-    [SerializeField] private GameObject tripleLaserPrefab;
+    [SerializeField] private GameObject tripleShotPrefab;
+
     private Coroutine tripleShotCoroutine;
-    private bool tripleLaserActive => tripleShotCoroutine != null;
+    private WaitForSeconds tripleShotDuration = new WaitForSeconds(5f);
+    private bool tripleShotActive => tripleShotCoroutine != null;
 
-    [Header("Triple Shoot")]
+
+    [Header("Heat Seek Shoot")]
     [SerializeField] private GameObject heatSeekShotPrefab;
+
     private Coroutine heatSeekShotCoroutine;
+    private WaitForSeconds heatSeekDuration = new WaitForSeconds(5f);
     private bool heatSeekShotActive => heatSeekShotCoroutine != null;
+
 
     [Header("Extra Speed")]
     [SerializeField] [Range(1f, 3f)] private float extraSpeedMultiplier;
+
     private Coroutine extraSpeedCoroutine;
+    private WaitForSeconds extraSpeedDuration = new WaitForSeconds(8f);
     private bool extraSpeedActive => extraSpeedCoroutine != null;
 
+
     [Header("Shield")]
-    private int shieldHealth = 3;
+    private int shieldHealth = 0;
+    private int shieldMaxHealth = 3;
     private bool shieldActive;
     #endregion
 
@@ -188,7 +203,7 @@ public class Ship : MonoBehaviour, IDamageable
 
                 // Choose between Triple, Heat Seek or Single laser
                 GameObject laserType = laserPrefab;
-                laserType = tripleLaserActive ? tripleLaserPrefab : laserType;
+                laserType = tripleShotActive ? tripleShotPrefab : laserType;
                 laserType = heatSeekShotActive ? heatSeekShotPrefab : laserType;
 
                 // Ignore own lasers
@@ -230,7 +245,7 @@ public class Ship : MonoBehaviour, IDamageable
                 if (heatSeekShotCoroutine != null) StopPowerUp(PowerUp.Type.HeatSeek);
                 if (tripleShotCoroutine != null) StopPowerUp(PowerUp.Type.TripleShot);
 
-                tripleShotCoroutine = StartCoroutine(TripleShotDuration());
+                tripleShotCoroutine = StartCoroutine(AbilityDuration(() => StopPowerUp(PowerUp.Type.TripleShot), tripleShotDuration));
                 RefillAmmo(shootAbilityAmmoRefill);
                 break;
 
@@ -238,14 +253,14 @@ public class Ship : MonoBehaviour, IDamageable
                 if (tripleShotCoroutine != null) StopPowerUp(PowerUp.Type.TripleShot);
                 if (heatSeekShotCoroutine != null) StopPowerUp(PowerUp.Type.HeatSeek);
 
-                heatSeekShotCoroutine = StartCoroutine(HeatSeekDuration());
+                heatSeekShotCoroutine = StartCoroutine(AbilityDuration(() => StopPowerUp(PowerUp.Type.HeatSeek), heatSeekDuration));
                 RefillAmmo(shootAbilityAmmoRefill);
                 break;
 
             case PowerUp.Type.Speed:
                 if (extraSpeedCoroutine != null) StopPowerUp(PowerUp.Type.TripleShot);
 
-                extraSpeedCoroutine = StartCoroutine(ExtraSpeedDuration());
+                extraSpeedCoroutine = StartCoroutine(AbilityDuration(() => StopPowerUp(PowerUp.Type.Speed), extraSpeedDuration));
                 break;
 
             case PowerUp.Type.Shield:
@@ -299,25 +314,15 @@ public class Ship : MonoBehaviour, IDamageable
         }
     }
 
-    private IEnumerator TripleShotDuration()
+    private IEnumerator AbilityDuration(System.Action OnEndCallback, WaitForSeconds abilityDuration)
     {
         yield return abilityDuration;
-        tripleShotCoroutine = null;
-    }
-    private IEnumerator HeatSeekDuration()
-    {
-        yield return abilityDuration;
-        heatSeekShotCoroutine = null;
-    }
-    private IEnumerator ExtraSpeedDuration()
-    {
-        yield return abilityDuration;
-        extraSpeedCoroutine = null;
+        OnEndCallback?.Invoke();
     }
 
     private void ActivateShield()
     {
-        shieldHealth = 3;
+        shieldHealth = shieldMaxHealth;
         shieldActive = true;
 
         shieldAnim.gameObject.SetActive(shieldActive);
@@ -432,7 +437,7 @@ public class Ship : MonoBehaviour, IDamageable
     private void ShieldTakeDamage(int damageToTake)
     {
         shieldHealth -= damageToTake;
-        shieldHealth = Mathf.Clamp(shieldHealth, 0, 3);
+        shieldHealth = Mathf.Clamp(shieldHealth, 0, shieldMaxHealth);
 
         shieldAnim.SetInteger(shieldAnim_HealthHash, shieldHealth);
 
