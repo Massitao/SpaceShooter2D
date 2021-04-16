@@ -6,6 +6,7 @@ public class HeatMissile : MonoBehaviour
     [Header("Heat Missile Properties")]
     [SerializeField] private float missileSpeed = 10f;
     [SerializeField] private float angularSpeed = 5f;
+    [SerializeField] private int damage = 1;
 
     [Header("Target")]
     [SerializeField] private float radiusDetection = 8f;
@@ -14,15 +15,14 @@ public class HeatMissile : MonoBehaviour
     private Enemy enemyTarget = null;
     private Vector2 enemyTargetDir = Vector2.zero;
 
-    private Collider2D[] enemyContacts = new Collider2D[5];
+    private Collider2D[] enemyContacts = new Collider2D[10];
     private WaitForSeconds heatSeekUpdate = new WaitForSeconds(0.5f);
-    private Coroutine heatSeekCoroutine = null;
 
 
     #region MonoBehaviour Methods
     private void Start()
     {
-        heatSeekCoroutine = StartCoroutine(HeatSeek());
+        StartCoroutine(HeatSeek());
     }
 
     // Update is called once per frame
@@ -36,8 +36,7 @@ public class HeatMissile : MonoBehaviour
         // Hurts any Damageable Entity
         if (collision.gameObject.TryGetComponent(out IDamageable damageableEntity))
         {
-            damageableEntity.TakeDamage(1);
-            StopHeatSeek();
+            damageableEntity.TakeDamage(damage);
             Destroy(gameObject);
         }
     }
@@ -63,7 +62,6 @@ public class HeatMissile : MonoBehaviour
         // If Laser is out of bounds
         if (transform.position.y <= SpaceShooterData.LaserBoundLimitsY.x || transform.position.y >= SpaceShooterData.LaserBoundLimitsY.y)
         {
-            StopHeatSeek();
             Destroy(gameObject);
         }
     }
@@ -101,14 +99,6 @@ public class HeatMissile : MonoBehaviour
 
             enemyTarget = selectedEnemy;
             yield return heatSeekUpdate;
-        }
-    }
-    private void StopHeatSeek()
-    {
-        if (heatSeekCoroutine != null)
-        {
-            StopCoroutine(heatSeekCoroutine);
-            heatSeekCoroutine = null;
         }
     }
     #endregion

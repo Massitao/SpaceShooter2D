@@ -4,26 +4,26 @@ using UnityEngine;
 public class SpawnManager : MonoSingleton<SpawnManager>
 {
     #region Variables
-    // Shared Spawner Properties
+    // Defined Entities to Spawn
     private enum SpawnEntity { Enemy, Asteroid, PowerUp }
-    private WaitForSeconds enemySpawnRate = new WaitForSeconds(2f);
-    private WaitForSeconds asteroidSpawnRate = new WaitForSeconds(5f);
-    private WaitForSeconds powerUpSpawnRate = new WaitForSeconds(10f);
 
 
     [Header("Enemy Spawner")]
     [SerializeField] private GameObject enemyPrefab;
     private Coroutine enemyRespawnCoroutine;
+    private WaitForSeconds enemySpawnRate = new WaitForSeconds(2f);
 
 
-    [Header("Enemy Spawner")]
+    [Header("Asteroid Spawner")]
     [SerializeField] private GameObject asteroidPrefab;
     private Coroutine asteroidRespawnCoroutine;
+    private WaitForSeconds asteroidSpawnRate = new WaitForSeconds(5f);
 
 
     [Header("PowerUp Spawner")]
     [SerializeField] private GameObject powerUpPrefab;
     private Coroutine powerUpRespawnCoroutine;
+    private WaitForSeconds powerUpSpawnRate = new WaitForSeconds(7f);
     #endregion
 
 
@@ -45,7 +45,7 @@ public class SpawnManager : MonoSingleton<SpawnManager>
             case SpawnEntity.Enemy:
                 if (enemyRespawnCoroutine == null)
                 {
-                    enemyRespawnCoroutine = StartCoroutine(SpawnEnemy());
+                    enemyRespawnCoroutine = StartCoroutine(SpawnEnemyEntity(enemyPrefab, enemySpawnRate));
                 }
 
                 break;
@@ -53,7 +53,7 @@ public class SpawnManager : MonoSingleton<SpawnManager>
             case SpawnEntity.Asteroid:
                 if (asteroidRespawnCoroutine == null)
                 {
-                    asteroidRespawnCoroutine = StartCoroutine(SpawnAsteroid());
+                    asteroidRespawnCoroutine = StartCoroutine(SpawnEnemyEntity(asteroidPrefab, asteroidSpawnRate));
                 }
 
                 break;
@@ -106,42 +106,31 @@ public class SpawnManager : MonoSingleton<SpawnManager>
         StopEntitySpawn(SpawnEntity.PowerUp);
     }
 
-    private IEnumerator SpawnEnemy()
+    private IEnumerator SpawnEnemyEntity(GameObject enemyToSpawn, WaitForSeconds spawnDelay)
     {
+        Vector2 spawnPos = Vector2.zero;
+
         while (true)
         {
-            yield return enemySpawnRate;
+            yield return spawnDelay;
 
-            GameObject newEnemy = Instantiate(enemyPrefab, new Vector3(Random.Range(-SpaceShooterData.EnemySpawnX, SpaceShooterData.EnemySpawnX), SpaceShooterData.EnemyBoundLimitsY.y, 0f), Quaternion.identity);
-            newEnemy.transform.SetParent(transform);
-        }
-    }
-    private IEnumerator SpawnAsteroid()
-    {
-        while (true)
-        {
-            yield return asteroidSpawnRate;
-
-            GameObject newEnemy = Instantiate(asteroidPrefab, new Vector3(Random.Range(-SpaceShooterData.EnemySpawnX, SpaceShooterData.EnemySpawnX), SpaceShooterData.EnemyBoundLimitsY.y, 0f), Quaternion.identity);
-            newEnemy.transform.SetParent(transform);
+            spawnPos = new Vector3(Random.Range(-SpaceShooterData.EnemySpawnX, SpaceShooterData.EnemySpawnX), SpaceShooterData.EnemyBoundLimitsY.y);
+            GameObject newEnemy = Instantiate(enemyToSpawn, spawnPos, Quaternion.identity, transform);
         }
     }
     private IEnumerator SpawnPowerUp()
     {
+        Vector2 spawnPos = Vector2.zero;
+
         while (true)
         {
             yield return powerUpSpawnRate;
 
-            PowerUp newPowerUp = Instantiate(powerUpPrefab, new Vector3(Random.Range(-SpaceShooterData.EnemySpawnX * .9f, SpaceShooterData.EnemySpawnX * .9f), SpaceShooterData.EnemyBoundLimitsY.y, 0f), Quaternion.identity).GetComponent<PowerUp>();
-            int randomPowerUp = Random.Range(0, System.Enum.GetNames(typeof(PowerUp.Type)).Length);
+            spawnPos = new Vector3(Random.Range(-SpaceShooterData.EnemySpawnX * .9f, SpaceShooterData.EnemySpawnX * .9f), SpaceShooterData.EnemyBoundLimitsY.y);
+            PowerUp newPowerUp = Instantiate(powerUpPrefab, spawnPos, Quaternion.identity, transform).GetComponent<PowerUp>();
 
-            if (randomPowerUp == (int)PowerUp.Type.HeatSeek)
-            {
-                if (Random.value > 0.5f)
-                {
-                    randomPowerUp = (int)PowerUp.Type.TripleShot;
-                }
-            }
+            int randomPowerUp = Random.Range(0, System.Enum.GetNames(typeof(PowerUp.Type)).Length);
+            randomPowerUp = (randomPowerUp == (int)PowerUp.Type.HeatSeek && Random.value > 0.5f) ? (int)PowerUp.Type.TripleShot : randomPowerUp;
 
             newPowerUp.SetPowerupType((PowerUp.Type)randomPowerUp);
         }

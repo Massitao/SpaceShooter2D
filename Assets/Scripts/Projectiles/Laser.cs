@@ -5,6 +5,7 @@ public class Laser : MonoBehaviour
     #region Variables
     [Header("Laser Properties")]
     [SerializeField] private float laserSpeed = 6f;
+    [SerializeField] private int damage = 1;
     #endregion
 
 
@@ -20,7 +21,7 @@ public class Laser : MonoBehaviour
         // Hurts any Damageable Entity
         if (collision.gameObject.TryGetComponent(out IDamageable damageableEntity))
         {
-            damageableEntity.TakeDamage(1);
+            damageableEntity.TakeDamage(damage);
             Destroy(gameObject);
         }
     }
