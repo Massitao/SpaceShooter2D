@@ -58,7 +58,13 @@ public class HeatMissile : MonoBehaviour
 
         // Move upwards (local axis)
         transform.Translate(Vector3.up * missileSpeed * Time.deltaTime, Space.Self);
-        
+
+        // Wrap ship around X axis
+        if (Mathf.Abs(transform.position.x) > SpaceShooterData.PlayerStartWrapX)
+        {
+            transform.position = new Vector3(SpaceShooterData.PlayerStartWrapX * Mathf.Sign(transform.position.x) * -1, transform.position.y);
+        }
+
         // If Laser is out of bounds
         if (transform.position.y <= SpaceShooterData.LaserBoundLimitsY.x || transform.position.y >= SpaceShooterData.LaserBoundLimitsY.y)
         {
@@ -66,7 +72,7 @@ public class HeatMissile : MonoBehaviour
         }
     }
 
-    IEnumerator HeatSeek()
+    private IEnumerator HeatSeek()
     {
         Enemy selectedEnemy = null;
         float nearestDistance = radiusDetection;
@@ -74,7 +80,7 @@ public class HeatMissile : MonoBehaviour
 
         while (true)
         {
-            if (enemyTarget == null)
+            if (enemyTarget == null || enemyTarget.EntityHealth == 0)
             {
                 selectedEnemy = null;
                 nearestDistance = radiusDetection;
@@ -84,7 +90,7 @@ public class HeatMissile : MonoBehaviour
                 {
                     if (enemyContacts[i] != null)
                     {
-                        if (enemyContacts[i].TryGetComponent(out Enemy enemyToCheck) && enemyToCheck.EntityHealth != 0)
+                        if (enemyContacts[i].TryGetComponent(out Enemy enemyToCheck) && enemyToCheck.EntityHealth > 0)
                         {
                             distanceCheck = Vector3.Distance(transform.position, enemyContacts[i].transform.position);
                             if (distanceCheck < nearestDistance)

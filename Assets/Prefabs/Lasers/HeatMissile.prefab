@@ -135,7 +135,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   missileSpeed: 11
   angularSpeed: 360
-  radiusDetection: 15
+  damage: 1
+  radiusDetection: 20
   detectionLM:
     serializedVersion: 2
     m_Bits: 1024

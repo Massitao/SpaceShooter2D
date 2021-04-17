@@ -367,6 +367,8 @@ public class Ship : MonoBehaviour, IDamageable
     }
     public void TakeDamage(int damageToTake)
     {
+        damageToTake = Mathf.Clamp(damageToTake, 0, int.MaxValue);
+
         if (shieldActive)
         {
             ShieldTakeDamage(damageToTake);
@@ -374,22 +376,35 @@ public class Ship : MonoBehaviour, IDamageable
         }
         if (invincible) return;
 
-        EntityHealth -= damageToTake;
-        EntityHealth = Mathf.Clamp(EntityHealth, 0, EntityMaxHealth);
+        EntityHealth = Mathf.Clamp(EntityHealth - damageToTake, 0, EntityMaxHealth);
         ActivateInvincibility();
 
         if (EntityHealth == 0)
         {
+            // Camera Shake
+            CameraShake.Instance?.AddStress(1f);
+
             Death();
         }
         else
         {
             leftEngineAnim.SetBool(engineAnim_Hurt, EntityHealth < 3);
             rightEngineAnim.SetBool(engineAnim_Hurt, EntityHealth < 2);
+
+            // Camera Shake
+            switch (EntityHealth)
+            {
+                case 2:
+                    CameraShake.Instance?.AddStress(.5f);
+                    break;
+                case 1:
+                    CameraShake.Instance?.AddStress(.75f);
+                    break;
+            }          
         }
 
-        AudioManager.Instance?.PlayOneShotClip(explosionClip);
         OnEntityDamaged?.Invoke(EntityHealth);
+        AudioManager.Instance?.PlayOneShotClip(explosionClip);
     }
     public void Death()
     {
@@ -460,10 +475,27 @@ public class Ship : MonoBehaviour, IDamageable
 
     private void ShieldTakeDamage(int damageToTake)
     {
-        shieldHealth -= damageToTake;
-        shieldHealth = Mathf.Clamp(shieldHealth, 0, shieldMaxHealth);
+        shieldHealth = Mathf.Clamp(shieldHealth - damageToTake, 0, shieldMaxHealth);
 
         shieldAnim.SetInteger(shieldAnim_HealthHash, shieldHealth);
+
+        // Camera Shake
+        switch (damageToTake)
+        {
+            case 0:
+                break;
+
+            case 1:
+                CameraShake.Instance?.AddStress(.5f);
+                break;
+            case 2:
+                CameraShake.Instance?.AddStress(.75f);
+                break;
+
+            default:
+                CameraShake.Instance?.AddStress(1f);
+                break;
+        }
 
         if (shieldHealth == 0)
         {

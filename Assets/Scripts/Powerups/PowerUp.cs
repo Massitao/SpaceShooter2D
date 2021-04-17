@@ -16,7 +16,6 @@ public class PowerUp : MonoBehaviour
 
     [Header("PowerUp Move")]
     [SerializeField] protected float speed = 3f;
-    [SerializeField] protected float despawnY = -9f;
 
     [Header("Audio")]
     [SerializeField] private AudioClip powerUpClip;
@@ -31,7 +30,7 @@ public class PowerUp : MonoBehaviour
         transform.Translate(Vector3.down * speed * Time.deltaTime);
 
         // Destroy if it reaches the Despawn Point
-        if (transform.position.y <= despawnY)
+        if (transform.position.y <= SpaceShooterData.EnemyBoundLimitsY.x)
         {
             Destroy(gameObject);
         }
