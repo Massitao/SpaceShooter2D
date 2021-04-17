@@ -16,6 +16,10 @@ public class UIManager : MonoSingleton<UIManager>
     [SerializeField] private TextMeshProUGUI ammoCountText;
     [SerializeField] private Slider ammoSlider;
 
+    [Header("Thrusters")]
+    [SerializeField] private Slider thrusterFuelSlider;
+    [SerializeField] private Slider thrusterCooldownSlider;
+
     [Header("Score")]
     [SerializeField] private TextMeshProUGUI scoreText;
 
@@ -38,6 +42,9 @@ public class UIManager : MonoSingleton<UIManager>
 
         playerShip.OnShoot += UpdateAmmoCount;
         playerShip.OnAmmoRefill += UpdateAmmoCount;
+
+        playerShip.OnThrusterFuelChange += UpdateThrusterFuelSlider;
+        playerShip.OnThrusterCooldownChange += UpdateThrusterCooldownSlider;
     }
     private void OnDisable()
     {
@@ -46,6 +53,9 @@ public class UIManager : MonoSingleton<UIManager>
 
         playerShip.OnShoot -= UpdateAmmoCount;
         playerShip.OnAmmoRefill -= UpdateAmmoCount;
+
+        playerShip.OnThrusterFuelChange -= UpdateThrusterFuelSlider;
+        playerShip.OnThrusterCooldownChange -= UpdateThrusterCooldownSlider;
     }
 
     private void Start()
@@ -54,6 +64,9 @@ public class UIManager : MonoSingleton<UIManager>
 
         ammoSlider.maxValue = playerShip.GetMaxAmmoCount();
         UpdateAmmoCount(playerShip.GetAmmoCount());
+
+        UpdateThrusterFuelSlider(1f);
+        UpdateThrusterCooldownSlider(0f);
     }
     #endregion
 
@@ -72,6 +85,14 @@ public class UIManager : MonoSingleton<UIManager>
     {
         ammoCountText.text = $"Lasers: {updatedPlayerAmmoCount.ToString("00")} / {playerShip.GetMaxAmmoCount()}";
         ammoSlider.value = updatedPlayerAmmoCount;
+    }
+    public void UpdateThrusterFuelSlider(float updatedPlayerFuel)
+    {
+        thrusterFuelSlider.value = updatedPlayerFuel;
+    }
+    public void UpdateThrusterCooldownSlider(float updatedPlayerThrusterCooldown)
+    {
+        thrusterCooldownSlider.value = updatedPlayerThrusterCooldown;
     }
     public void UpdateScore(int updatedScore)
     {
