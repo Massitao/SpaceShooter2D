@@ -132,7 +132,7 @@ public class SpawnManager : MonoSingleton<SpawnManager>
             int randomPowerUp = Random.Range(0, System.Enum.GetNames(typeof(PowerUp.Type)).Length);
             randomPowerUp = (randomPowerUp == (int)PowerUp.Type.HeatSeek && Random.value > 0.5f) ? (int)PowerUp.Type.TripleShot : randomPowerUp;
 
-            newPowerUp.SetPowerupType((PowerUp.Type.HeatSeek));
+            newPowerUp.SetPowerupType((PowerUp.Type)randomPowerUp);
         }
     }
     #endregion

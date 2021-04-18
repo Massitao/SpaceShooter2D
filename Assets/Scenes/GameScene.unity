@@ -1336,7 +1336,7 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 2.36
+      scalar: 2.35
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -2305,7 +2305,7 @@ ParticleSystem:
     x:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0
+      scalar: 0.30822513
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -2411,7 +2411,7 @@ ParticleSystem:
     curve:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.7853982
+      scalar: 0
       minScalar: 0.7853982
       maxCurve:
         serializedVersion: 2
@@ -3794,7 +3794,7 @@ ParticleSystem:
     strength:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1
+      scalar: -1.66
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -3951,7 +3951,7 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     separateAxes: 0
-    frequency: 0.5
+    frequency: 1.47
     damping: 1
     octaves: 1
     octaveMultiplier: 0.5
@@ -3960,7 +3960,7 @@ ParticleSystem:
     scrollSpeed:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0
+      scalar: 1.06
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -7996,12 +7996,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Ship
       objectReference: {fileID: 0}
-    - target: {fileID: 7222636168036227811, guid: 43b64af69b38583479150f4b51a44f7d,
-        type: 3}
-      propertyPath: laserPrefab
-      value: 
-      objectReference: {fileID: 3607081831160039948, guid: e34c9ca3d32530d4799f084abe9394d5,
-        type: 3}
     - target: {fileID: 7222636168036227813, guid: 43b64af69b38583479150f4b51a44f7d,
         type: 3}
       propertyPath: m_RootOrder
