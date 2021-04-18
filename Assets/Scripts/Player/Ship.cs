@@ -10,6 +10,7 @@ public class Ship : MonoBehaviour, IDamageable
     [SerializeField] private Collider2D     shipCollider;
     [SerializeField] private PlayerInput    shipInput;
     [SerializeField] private Animator       shipAnim;
+    [SerializeField] private AudioSource    shipAudioSource;
 
     [Header("Child Components")]
     [SerializeField] private Animator leftEngineAnim;
@@ -45,10 +46,18 @@ public class Ship : MonoBehaviour, IDamageable
     #region Ship Health
     [Header("Ship Health")]
     [SerializeField] private int entityHealth;
-    public int EntityHealth { get { return entityHealth; } set { entityHealth = value; } }
+    public int EntityHealth
+    {
+        get { return entityHealth; }
+        set { entityHealth = Mathf.Clamp(value, 0, EntityMaxHealth); }
+    }
 
     [SerializeField] private int entityMaxHealth = 3;
-    public int EntityMaxHealth { get { return entityMaxHealth; } set { entityMaxHealth = value; } }
+    public int EntityMaxHealth
+    {
+        get { return entityMaxHealth; }
+        set { entityMaxHealth = Mathf.Clamp(value, 1, int.MaxValue); }
+    }
 
 
     [Header("Ship Invincibility")]
@@ -153,12 +162,16 @@ public class Ship : MonoBehaviour, IDamageable
     #region MonoBehaviour Methods
     private void Awake()
     {
+        // Set Entity Health to Max Health
         entityHealth = entityMaxHealth;
+
+        // Refill ammo
         ammoCount = maxAmmo;
     }
 
     private void Start()
     {
+        // Start Thruster Coroutine
         StartCoroutine(ThrusterBehaviour());
     }
 
@@ -182,15 +195,18 @@ public class Ship : MonoBehaviour, IDamageable
     }
     public void UpdateShootInput(InputAction.CallbackContext input)
     {
-        doShoot = input.ReadValueAsButton();
+        // Set Shoot input value
+        doShoot = input.performed;
 
+        // If the Input has been pressed, and there's no more ammo, play No Ammo Sound
         if (input.performed && ammoCount == 0)
         {
-            AudioManager.Instance?.PlayOneShotClip(noAmmoClip);
+            shipAudioSource.PlayOneShot(noAmmoClip);
         }
     }
     public void UpdateThrusterInput(InputAction.CallbackContext input)
     {
+        // Set Thrust Input value
         thrustPressed = input.ReadValueAsButton();
     }
     #endregion
@@ -198,7 +214,8 @@ public class Ship : MonoBehaviour, IDamageable
     #region Movement
     private void Move()
     {
-        transform.Translate(moveInput * SpeedSelection() * Time.deltaTime);
+        // Move Ship - Uses Normalized Input and Selects a Speed
+        transform.Translate(moveInput.normalized * SpeedSelection() * Time.deltaTime);
 
         MoveHorizontalWrap();
         MoveVerticalClamp();
@@ -217,9 +234,9 @@ public class Ship : MonoBehaviour, IDamageable
     private void MoveHorizontalWrap()
     {
         // Wrap ship around X axis
-        if (Mathf.Abs(transform.position.x) > SpaceShooterData.PlayerStartWrapX)
+        if (Mathf.Abs(transform.position.x) > SpaceShooterData.WrapX)
         {
-            transform.position = new Vector3(SpaceShooterData.PlayerStartWrapX * Mathf.Sign(transform.position.x) * -1, transform.position.y);
+            transform.position = new Vector3(SpaceShooterData.WrapX * Mathf.Sign(transform.position.x) * -1, transform.position.y);
         }
     }
     private void MoveVerticalClamp()
@@ -302,8 +319,10 @@ public class Ship : MonoBehaviour, IDamageable
     #region Shoot
     private void Shoot()
     {
+        // If Shoot input is performed, and Ship has ammo...
         if (doShoot && ammoCount != 0)
         {
+            // If Time.time is higher than the Fire Rate Timer
             if (Time.time >= fireRateTimer)
             {
                 // Subtract laser
@@ -355,41 +374,58 @@ public class Ship : MonoBehaviour, IDamageable
     #endregion
 
     #region Entity Health
-    private void HealShip(int ammountToHeal)
+    private void HealShip(int amountToHeal)
     {
-        ammountToHeal = Mathf.Clamp(ammountToHeal, 0, EntityMaxHealth);
-        EntityHealth = Mathf.Clamp(EntityHealth + ammountToHeal, 0, EntityMaxHealth);
+        // Clamp Heal Amount (No negative values or exceeding max health)
+        amountToHeal = Mathf.Clamp(amountToHeal, 0, EntityMaxHealth);
 
+        // Clamp Health
+        EntityHealth = Mathf.Clamp(EntityHealth + amountToHeal, 0, EntityMaxHealth);
+
+        // Update Engine Animators
         leftEngineAnim.SetBool(engineAnim_Hurt, EntityHealth < 3);
         rightEngineAnim.SetBool(engineAnim_Hurt, EntityHealth < 2);
 
+        // Trigger On Heal Event, passing in the Ship's health
         OnEntityHealed?.Invoke(EntityHealth);
     }
     public void TakeDamage(int damageToTake)
     {
-        damageToTake = Mathf.Clamp(damageToTake, 0, int.MaxValue);
+        // Clamp Heal Amount (No negative values or exceeding max health)
+        damageToTake = Mathf.Clamp(damageToTake, 0, EntityMaxHealth);
 
+        // If the Ship is in Invincibility state, stop executing this method
+        if (invincible) return;
+
+        // If shield is active, make the shield take the damage instead and stop executing this method
         if (shieldActive)
         {
             ShieldTakeDamage(damageToTake);
             return;
         }
-        if (invincible) return;
 
+        // Take damage and clamp Health
         EntityHealth = Mathf.Clamp(EntityHealth - damageToTake, 0, EntityMaxHealth);
-        ActivateInvincibility();
 
         if (EntityHealth == 0)
         {
             // Camera Shake
             CameraShake.Instance?.AddStress(1f);
 
+            // Destroy Ship
             Death();
         }
         else
         {
+            // Activate Invincibility state
+            ActivateInvincibility();
+
+            // Update Engine Animators
             leftEngineAnim.SetBool(engineAnim_Hurt, EntityHealth < 3);
             rightEngineAnim.SetBool(engineAnim_Hurt, EntityHealth < 2);
+
+            // Play Explosion Sound
+            shipAudioSource.PlayOneShot(explosionClip);
 
             // Camera Shake
             switch (EntityHealth)
@@ -403,34 +439,32 @@ public class Ship : MonoBehaviour, IDamageable
             }          
         }
 
+        // This event is triggered when the Ship gets damaged. Needs to pass in the Ship Health's value
         OnEntityDamaged?.Invoke(EntityHealth);
-        AudioManager.Instance?.PlayOneShotClip(explosionClip);
     }
     public void Death()
     {
         OnEntityKilled?.Invoke(this);
 
-        StopPowerUp(PowerUp.Type.TripleShot);
-        StopPowerUp(PowerUp.Type.Speed);
-        StopPowerUp(PowerUp.Type.Shield);
-        StopInvincibility();
-
+        // Instantiate Explosion and Destroy this GameObject
         Instantiate(explosion, transform.position, Quaternion.identity);
-
         Destroy(gameObject);
     }
 
     private void ActivateInvincibility()
     {
+        // If the Invincibility Coroutine is running, stop it
         if (invincibilityCoroutine != null)
         {
             StopCoroutine(invincibilityCoroutine);
         }
 
+        // Start Invincibility Coroutine
         invincibilityCoroutine = StartCoroutine(InvincibilityDuration());
     }
     private void StopInvincibility()
     {
+        // If the Invincibility coroutine is running, stop it, clear the Coroutine variable and enable collisions
         if (invincibilityCoroutine != null)
         {
             StopCoroutine(invincibilityCoroutine);
@@ -441,12 +475,18 @@ public class Ship : MonoBehaviour, IDamageable
     }
     private IEnumerator InvincibilityDuration()
     {
+        // Start Invincibility Animation
         shipAnim.SetTrigger(shipAnim_InvincibilityHash);
+
+        // Disable Collisions
         shipCollider.enabled = false;
 
         yield return invincibilityDuration;
 
+        // Enable Collisions
         shipCollider.enabled = true;
+
+        // Clear Coroutine variable
         invincibilityCoroutine = null;
     }
     #endregion
@@ -454,20 +494,24 @@ public class Ship : MonoBehaviour, IDamageable
     #region Shield
     private void ActivateShield()
     {
-        shieldHealth = shieldMaxHealth;
+        // Activate Shield and Set the health to Max Shield Health
         shieldActive = true;
+        shieldHealth = shieldMaxHealth;
 
+        // Set Active Shield GameObject, and update the Shield Animator
         shieldAnim.gameObject.SetActive(shieldActive);
-
         shieldAnim.SetInteger(shieldAnim_HealthHash, shieldHealth);
     }
     private void StopShield()
     {
+        // If the Shield is active
         if (shieldActive)
         {
-            shieldHealth = 0;
+            // Deactivate shield, and set the health to 0
             shieldActive = false;
+            shieldHealth = 0;
 
+            // Update Shield Animator, and Deactivate Shield GameObject
             shieldAnim.SetInteger(shieldAnim_HealthHash, shieldHealth);
             shieldAnim.gameObject.SetActive(shieldActive);
         }
@@ -475,9 +519,17 @@ public class Ship : MonoBehaviour, IDamageable
 
     private void ShieldTakeDamage(int damageToTake)
     {
+        // Take Shield Damage, and clamp the value
         shieldHealth = Mathf.Clamp(shieldHealth - damageToTake, 0, shieldMaxHealth);
 
+        // Update Shield Animator
         shieldAnim.SetInteger(shieldAnim_HealthHash, shieldHealth);
+
+        // If the Shield is broken, stop Shield effects
+        if (shieldHealth == 0)
+        {
+            StopPowerUp(PowerUp.Type.Shield);
+        }
 
         // Camera Shake
         switch (damageToTake)
@@ -497,10 +549,6 @@ public class Ship : MonoBehaviour, IDamageable
                 break;
         }
 
-        if (shieldHealth == 0)
-        {
-            StopPowerUp(PowerUp.Type.Shield);
-        }
         ActivateInvincibility();
     }
     #endregion

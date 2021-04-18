@@ -48,7 +48,6 @@ public class GameManager : MonoSingleton<GameManager>
     {
         score += scoreToAdd;
         UIManager.Instance?.UpdateScore(score);
-
     }
     public void GameOver(IDamageable playerKilled)
     {

@@ -114,7 +114,7 @@ public class SpawnManager : MonoSingleton<SpawnManager>
         {
             yield return spawnDelay;
 
-            spawnPos = new Vector3(Random.Range(-SpaceShooterData.EnemySpawnX, SpaceShooterData.EnemySpawnX), SpaceShooterData.EnemyBoundLimitsY.y);
+            spawnPos = new Vector3(Random.Range(-SpaceShooterData.SpawnX, SpaceShooterData.SpawnX), SpaceShooterData.EnemyBoundLimitsY.y);
             GameObject newEnemy = Instantiate(enemyToSpawn, spawnPos, Quaternion.identity, transform);
         }
     }
@@ -126,7 +126,7 @@ public class SpawnManager : MonoSingleton<SpawnManager>
         {
             yield return powerUpSpawnRate;
 
-            spawnPos = new Vector3(Random.Range(-SpaceShooterData.EnemySpawnX * .9f, SpaceShooterData.EnemySpawnX * .9f), SpaceShooterData.EnemyBoundLimitsY.y);
+            spawnPos = new Vector3(Random.Range(-SpaceShooterData.SpawnX * .9f, SpaceShooterData.SpawnX * .9f), SpaceShooterData.EnemyBoundLimitsY.y);
             PowerUp newPowerUp = Instantiate(powerUpPrefab, spawnPos, Quaternion.identity, transform).GetComponent<PowerUp>();
 
             int randomPowerUp = Random.Range(0, System.Enum.GetNames(typeof(PowerUp.Type)).Length);
