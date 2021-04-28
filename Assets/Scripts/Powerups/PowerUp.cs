@@ -12,17 +12,29 @@ public class PowerUp : MonoBehaviour
 
     [Header("PowerUp Type")]
     [SerializeField] private Type type;
-    public enum Type { TripleShot, HeatSeek, Speed, Shield, Life, Ammo }
+    public enum Type { TripleShot, HeatSeek, Speed, Shield, Life, Ammo, Beam}
 
     [Header("PowerUp Move")]
     [SerializeField] protected float speed = 3f;
 
     [Header("Audio")]
     [SerializeField] private AudioClip powerUpClip;
+
+
+    [Header("Debug")]
+    [SerializeField] private bool initialize;
     #endregion
 
 
     #region MonoBehaviour Methods
+    private void Start()
+    {
+        if (initialize)
+        {
+            SetPowerupType(type);
+        }
+    }
+
     // Update is called once per frame
     private void Update()
     {

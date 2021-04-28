@@ -89,6 +89,8 @@ public class Asteroid : MonoBehaviour, IDamageable
     // IDamageable - Behaviour to run when the Asteroid is damaged.
     public void TakeDamage(int damageToTake)
     {
+        EntityHealth -= damageToTake;
+
         // Invokes event, passing in the "damageToTake" value
         OnEntityDamaged?.Invoke(damageToTake);
 

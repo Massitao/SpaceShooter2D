@@ -16,6 +16,8 @@ public class Ship : MonoBehaviour, IDamageable
     [SerializeField] private Animator leftEngineAnim;
     [SerializeField] private Animator rightEngineAnim;
     [SerializeField] private Animator shieldAnim;
+
+    [SerializeField] private LaserBeam laserBeam;
     #endregion
 
     #region Animator Strings
@@ -133,6 +135,10 @@ public class Ship : MonoBehaviour, IDamageable
     private bool extraSpeedActive => extraSpeedCoroutine != null;
 
 
+    [Header("Beam")]
+    [SerializeField] private bool beamReadyToUse;
+
+
     [Header("Shield")]
     private int shieldHealth = 0;
     private int shieldMaxHealth = 3;
@@ -199,7 +205,7 @@ public class Ship : MonoBehaviour, IDamageable
         doShoot = input.performed;
 
         // If the Input has been pressed, and there's no more ammo, play No Ammo Sound
-        if (input.performed && ammoCount == 0)
+        if (input.performed && ammoCount == 0 && !laserBeam.IsBeamCoroutineRunning() && !beamReadyToUse)
         {
             shipAudioSource.PlayOneShot(noAmmoClip);
         }
@@ -319,11 +325,17 @@ public class Ship : MonoBehaviour, IDamageable
     #region Shoot
     private void Shoot()
     {
-        // If Shoot input is performed, and Ship has ammo...
-        if (doShoot && ammoCount != 0)
+        // If Shoot input is performed
+        if (doShoot)
         {
-            // If Time.time is higher than the Fire Rate Timer
-            if (Time.time >= fireRateTimer)
+            if (beamReadyToUse)
+            {
+                FireLaserBeam();
+                return;
+            }
+
+            // If the Ship has ammo and Time.time is higher than the Fire Rate Timer
+            if (ammoCount != 0 && Time.time >= fireRateTimer && !laserBeam.IsBeamCoroutineRunning())
             {
                 // Subtract laser
                 ammoCount--;
@@ -553,6 +565,26 @@ public class Ship : MonoBehaviour, IDamageable
     }
     #endregion
 
+    #region Laser Beam
+    private void PrepareBeam()
+    {
+        if (laserBeam.GetBeamState() == LaserBeam.BeamState.Inactive)
+        {
+            beamReadyToUse = true;
+        }
+        else
+        {
+            FireLaserBeam();
+        }
+    }
+
+    private void FireLaserBeam()
+    {
+        beamReadyToUse = false;
+        laserBeam.StartBeam();
+    }
+    #endregion
+
     #region PowerUps
     /// <summary>
     /// Triggers a ship ability.
@@ -566,6 +598,7 @@ public class Ship : MonoBehaviour, IDamageable
             case PowerUp.Type.TripleShot:
                 if (heatSeekShotCoroutine != null) StopPowerUp(PowerUp.Type.HeatSeek);
                 if (tripleShotCoroutine != null) StopPowerUp(PowerUp.Type.TripleShot);
+                beamReadyToUse = false;
 
                 tripleShotCoroutine = StartCoroutine(AbilityDuration(() => StopPowerUp(PowerUp.Type.TripleShot), tripleShotDuration));
                 RefillAmmo(shootAbilityAmmoRefill);
@@ -574,6 +607,7 @@ public class Ship : MonoBehaviour, IDamageable
             case PowerUp.Type.HeatSeek:
                 if (tripleShotCoroutine != null) StopPowerUp(PowerUp.Type.TripleShot);
                 if (heatSeekShotCoroutine != null) StopPowerUp(PowerUp.Type.HeatSeek);
+                beamReadyToUse = false;
 
                 heatSeekShotCoroutine = StartCoroutine(AbilityDuration(() => StopPowerUp(PowerUp.Type.HeatSeek), heatSeekDuration));
                 RefillAmmo(shootAbilityAmmoRefill);
@@ -595,6 +629,10 @@ public class Ship : MonoBehaviour, IDamageable
 
             case PowerUp.Type.Ammo:
                 RefillAmmo();
+                break;
+
+            case PowerUp.Type.Beam:
+                PrepareBeam();
                 break;
         }
     }

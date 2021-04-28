@@ -73,7 +73,7 @@ public class UIManager : MonoSingleton<UIManager>
     #region Custom Methods
     public void UpdateLives(int updatedPlayerHealth)
     {
-        livesImage.sprite = livesSprites[Mathf.Clamp(updatedPlayerHealth, 0, livesSprites.Length)];
+        livesImage.sprite = livesSprites[Mathf.Clamp(updatedPlayerHealth, 0, livesSprites.Length - 1)];
 
         if (updatedPlayerHealth == 0)
         {
