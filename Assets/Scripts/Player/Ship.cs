@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using GalaxyShooter.Interfaces;
 
 public class Ship : MonoBehaviour, IDamageable
 {

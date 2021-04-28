@@ -1,0 +1,17 @@
+{
+    "name": "GalaxyShooter.Entities.Player",
+    "references": [
+        "GUID:5e20d7fe275034640859a346fe05b1c7",
+        "GUID:734bac51a5bd40f4980f00a7c6eaa367",
+        "GUID:75469ad4d38634e559750d17036d5f7c"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
