@@ -5978,16 +5978,20 @@ MonoBehaviour:
   shipThrusterRecoveryCooldown: 2
   laserPrefab: {fileID: 2716096619162409450, guid: e6d94afe478a45148ab7019023453c26,
     type: 3}
-  laserSpawnOffset: {x: 0, y: 0.6, z: 0}
+  laserSpawnOffset: {x: 0, y: 0.875}
   fireRate: 0.2
   ammoCount: 0
   maxAmmo: 30
   shipProjectileLayer: 11
   shootAbilityAmmoRefill: 15
-  tripleShotPrefab: {fileID: 8347454820370703129, guid: 08b6f497d6c3cac43b0520072905dbf4,
+  tripleShotPrefab: {fileID: 8704510761869805030, guid: f21b464ef0bf5324dafc635dbb628cc9,
     type: 3}
+  leftLaserSpawnOffset: {x: -0.5, y: -0.125}
+  rightLaserSpawnOffset: {x: 0.5, y: -0.125}
+  tripleShotFireRate: 0.3
   heatSeekShotPrefab: {fileID: 3607081831160039948, guid: e34c9ca3d32530d4799f084abe9394d5,
     type: 3}
+  heatSeekFireRate: 0.15
   extraSpeedMultiplier: 1.5
   beamReadyToUse: 0
   shootClip: {fileID: 8300000, guid: 75676f361bdfeaf41a46623e95df3dbc, type: 3}
@@ -6216,7 +6220,7 @@ MonoBehaviour:
   beamMaxSizeX: 0.75
   beamChargeUpSpeed: 0.35
   beamChargeRegressSpeed: 1.5
-  beamDuration: 3
+  beamDuration: 3.5
   beamLightActivationPercentage: 0.25
   beamLightPingPong:
     serializedVersion: 2

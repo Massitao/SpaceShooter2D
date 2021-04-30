@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class Ship : MonoBehaviour, IDamageable
+public class Ship : MonoBehaviour, IHealable
 {
     #region Variables
     #region Components
@@ -24,18 +24,18 @@ public class Ship : MonoBehaviour, IDamageable
     [Header("Animator References")]
     // SHIP
     [SerializeField] private string shipAnim_Input;
-    private int shipAnim_InputHash => Animator.StringToHash(shipAnim_Input);
+    private int shipAnim_InputHash;
 
     [SerializeField] private string shipAnim_Invincibility;
-    private int shipAnim_InvincibilityHash => Animator.StringToHash(shipAnim_Invincibility);
+    private int shipAnim_InvincibilityHash;
 
     // ENGINES
     [SerializeField] private string engineAnim_Hurt;
-    private int engineAnim_HurtHash => Animator.StringToHash(engineAnim_Hurt);
+    private int engineAnim_HurtHash;
 
     // SHIELD
     [SerializeField] private string shieldAnim_Health;
-    private int shieldAnim_HealthHash => Animator.StringToHash(shieldAnim_Health);
+    private int shieldAnim_HealthHash;
     #endregion
 
     #region Input Values
@@ -51,14 +51,24 @@ public class Ship : MonoBehaviour, IDamageable
     public int EntityHealth
     {
         get { return entityHealth; }
-        set { entityHealth = Mathf.Clamp(value, 0, EntityMaxHealth); }
+        set
+        {
+            entityHealth = Mathf.Clamp(value, 0, EntityMaxHealth);
+            OnEntityHealthChange?.Invoke(entityHealth);
+        }
     }
 
     [SerializeField] private int entityMaxHealth = 3;
     public int EntityMaxHealth
     {
         get { return entityMaxHealth; }
-        set { entityMaxHealth = Mathf.Clamp(value, 1, int.MaxValue); }
+        set
+        {
+            entityMaxHealth = Mathf.Clamp(value, 1, int.MaxValue);
+
+            // In case the Max Health is lowered, it makes sure the current health is below the max health
+            EntityHealth = EntityHealth;
+        }
     }
 
 
@@ -92,8 +102,9 @@ public class Ship : MonoBehaviour, IDamageable
     #region Ship Shoot
     [Header("Ship Shoot")]
     [SerializeField] private GameObject laserPrefab;
-    [SerializeField] private Vector3 laserSpawnOffset;
+    [SerializeField] private Vector2 laserSpawnOffset;
     [SerializeField] private float fireRate = .2f;
+    private float selectedFireRateTime;
     private float fireRateTimer;
 
     [Space(8)]
@@ -113,6 +124,9 @@ public class Ship : MonoBehaviour, IDamageable
 
     [Header("Triple Shoot")]
     [SerializeField] private GameObject tripleShotPrefab;
+    [SerializeField] private Vector2 leftLaserSpawnOffset;
+    [SerializeField] private Vector2 rightLaserSpawnOffset;
+    [SerializeField] private float tripleShotFireRate = .4f;
 
     private Coroutine tripleShotCoroutine;
     private WaitForSeconds tripleShotDuration = new WaitForSeconds(5f);
@@ -121,9 +135,11 @@ public class Ship : MonoBehaviour, IDamageable
 
     [Header("Heat Seek Shoot")]
     [SerializeField] private GameObject heatSeekShotPrefab;
+    [SerializeField] private float heatSeekFireRate = .15f;
+
 
     private Coroutine heatSeekShotCoroutine;
-    private WaitForSeconds heatSeekDuration = new WaitForSeconds(5f);
+    private WaitForSeconds heatSeekDuration = new WaitForSeconds(2.5f);
     private bool heatSeekShotActive => heatSeekShotCoroutine != null;
 
 
@@ -158,8 +174,7 @@ public class Ship : MonoBehaviour, IDamageable
     public event System.Action<int> OnAmmoRefill;
     public event System.Action<float> OnThrusterCooldownChange;
     public event System.Action<float> OnThrusterFuelChange;
-    public event System.Action<int> OnEntityHealed;
-    public event System.Action<int> OnEntityDamaged;
+    public event System.Action<int> OnEntityHealthChange;
     public event System.Action<IDamageable> OnEntityKilled;
     #endregion
     #endregion
@@ -173,6 +188,15 @@ public class Ship : MonoBehaviour, IDamageable
 
         // Refill ammo
         ammoCount = maxAmmo;
+
+        // Set Selected Firerate
+        selectedFireRateTime = fireRate;
+
+        // Animator Strings
+        shipAnim_InputHash = Animator.StringToHash(shipAnim_Input);
+        shipAnim_InvincibilityHash = Animator.StringToHash(shipAnim_Invincibility);
+        engineAnim_HurtHash = Animator.StringToHash(engineAnim_Hurt);
+        shieldAnim_HealthHash = Animator.StringToHash(shieldAnim_Health);
     }
 
     private void Start()
@@ -341,26 +365,47 @@ public class Ship : MonoBehaviour, IDamageable
                 ammoCount--;
 
                 // Update timer
-                fireRateTimer = Time.time + fireRate;
-
-                // Choose between Triple, Heat Seek or Single laser
-                GameObject laserType = laserPrefab;
-                laserType = tripleShotActive ? tripleShotPrefab : laserType;
-                laserType = heatSeekShotActive ? heatSeekShotPrefab : laserType;
-
-                // Ignore own lasers
-                Transform[] lasersToIgnore = Instantiate(laserType, transform.position + laserSpawnOffset, Quaternion.identity).GetComponentsInChildren<Transform>();
-                for (int i = 0; i < lasersToIgnore.Length; i++)
-                {
-                    lasersToIgnore[i].gameObject.layer = shipProjectileLayer;
-                }
+                fireRateTimer = Time.time + selectedFireRateTime;
 
                 // Invoke event
                 OnShoot?.Invoke(ammoCount);
 
                 // Play Shoot soundclip
                 AudioManager.Instance?.PlayOneShotClip(shootClip);
+
+                if (tripleShotActive)
+                {
+                    Instantiate(tripleShotPrefab, transform.position + (Vector3)leftLaserSpawnOffset, Quaternion.identity).transform.gameObject.layer = shipProjectileLayer;
+                    Instantiate(tripleShotPrefab, transform.position + (Vector3)laserSpawnOffset, Quaternion.identity).transform.gameObject.layer = shipProjectileLayer;
+                    Instantiate(tripleShotPrefab, transform.position + (Vector3)rightLaserSpawnOffset, Quaternion.identity).transform.gameObject.layer = shipProjectileLayer;
+                    return;
+                }
+
+                if (heatSeekShotActive)
+                {
+                    Instantiate(heatSeekShotPrefab, transform.position + (Vector3)laserSpawnOffset, Quaternion.identity).transform.gameObject.layer = shipProjectileLayer;
+                    return;
+                }
+
+                // Normal Laser
+                Instantiate(laserPrefab, transform.position + (Vector3)laserSpawnOffset, Quaternion.identity).transform.gameObject.layer = shipProjectileLayer;
+                return;
             }
+        }
+    }
+
+    private void ChooseFireRate(float newFireRate)
+    {
+        fireRateTimer -= selectedFireRateTime;
+
+        selectedFireRateTime = newFireRate;
+        fireRateTimer += selectedFireRateTime;
+    }
+    private void ReturnToDefaultFireRate()
+    {
+        if (!tripleShotActive && !heatSeekShotActive)
+        {
+            ChooseFireRate(fireRate);
         }
     }
 
@@ -386,20 +431,17 @@ public class Ship : MonoBehaviour, IDamageable
     #endregion
 
     #region Entity Health
-    private void HealShip(int amountToHeal)
+    public void Heal(int amountToHeal)
     {
         // Clamp Heal Amount (No negative values or exceeding max health)
         amountToHeal = Mathf.Clamp(amountToHeal, 0, EntityMaxHealth);
 
-        // Clamp Health
-        EntityHealth = Mathf.Clamp(EntityHealth + amountToHeal, 0, EntityMaxHealth);
+        // Add Health
+        EntityHealth += amountToHeal;
 
         // Update Engine Animators
         leftEngineAnim.SetBool(engineAnim_Hurt, EntityHealth < 3);
         rightEngineAnim.SetBool(engineAnim_Hurt, EntityHealth < 2);
-
-        // Trigger On Heal Event, passing in the Ship's health
-        OnEntityHealed?.Invoke(EntityHealth);
     }
     public void TakeDamage(int damageToTake)
     {
@@ -417,7 +459,7 @@ public class Ship : MonoBehaviour, IDamageable
         }
 
         // Take damage and clamp Health
-        EntityHealth = Mathf.Clamp(EntityHealth - damageToTake, 0, EntityMaxHealth);
+        EntityHealth -= damageToTake;
 
         if (EntityHealth == 0)
         {
@@ -450,9 +492,6 @@ public class Ship : MonoBehaviour, IDamageable
                     break;
             }          
         }
-
-        // This event is triggered when the Ship gets damaged. Needs to pass in the Ship Health's value
-        OnEntityDamaged?.Invoke(EntityHealth);
     }
     public void Death()
     {
@@ -600,6 +639,8 @@ public class Ship : MonoBehaviour, IDamageable
                 if (tripleShotCoroutine != null) StopPowerUp(PowerUp.Type.TripleShot);
                 beamReadyToUse = false;
 
+                selectedFireRateTime = tripleShotFireRate;
+
                 tripleShotCoroutine = StartCoroutine(AbilityDuration(() => StopPowerUp(PowerUp.Type.TripleShot), tripleShotDuration));
                 RefillAmmo(shootAbilityAmmoRefill);
                 break;
@@ -608,6 +649,8 @@ public class Ship : MonoBehaviour, IDamageable
                 if (tripleShotCoroutine != null) StopPowerUp(PowerUp.Type.TripleShot);
                 if (heatSeekShotCoroutine != null) StopPowerUp(PowerUp.Type.HeatSeek);
                 beamReadyToUse = false;
+
+                selectedFireRateTime = heatSeekFireRate;
 
                 heatSeekShotCoroutine = StartCoroutine(AbilityDuration(() => StopPowerUp(PowerUp.Type.HeatSeek), heatSeekDuration));
                 RefillAmmo(shootAbilityAmmoRefill);
@@ -624,7 +667,7 @@ public class Ship : MonoBehaviour, IDamageable
                 break;
 
             case PowerUp.Type.Life:
-                HealShip(1);
+                Heal(1);
                 break;
 
             case PowerUp.Type.Ammo:
@@ -651,6 +694,8 @@ public class Ship : MonoBehaviour, IDamageable
                     StopCoroutine(tripleShotCoroutine);
                     tripleShotCoroutine = null;
                 }
+
+                ReturnToDefaultFireRate();
                 break;
 
             case PowerUp.Type.HeatSeek:
@@ -659,6 +704,8 @@ public class Ship : MonoBehaviour, IDamageable
                     StopCoroutine(heatSeekShotCoroutine);
                     heatSeekShotCoroutine = null;
                 }
+
+                ReturnToDefaultFireRate();
                 break;
 
             case PowerUp.Type.Speed:

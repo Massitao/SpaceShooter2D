@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 
-public class Laser : MonoBehaviour
+public class Laser : LaserBase
 {
     #region Variables
-    [Header("Laser Properties")]
-    [SerializeField] private float laserSpeed = 6f;
-    [SerializeField] private int damage = 1;
+    [Header("Laser Movement")]
+    [SerializeField] private bool worldAxis;
+    [SerializeField] private Vector2 moveDir;
     #endregion
 
 
@@ -15,8 +15,10 @@ public class Laser : MonoBehaviour
     {
         Move();
     }
+    #endregion
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    #region Custom Methods
+    protected override void LaserCollision(Collider2D collision)
     {
         // Hurts any Damageable Entity
         if (collision.gameObject.TryGetComponent(out IDamageable damageableEntity))
@@ -25,23 +27,15 @@ public class Laser : MonoBehaviour
             Destroy(gameObject);
         }
     }
-    #endregion
 
-    #region Custom Methods
-    private void Move()
+    protected override void Move()
     {
-        // Move upwards (local axis)
-        transform.Translate(Vector3.up * laserSpeed * Time.deltaTime, Space.Self);
+        // Moves the laser
+        transform.Translate(moveDir.normalized * laserSpeed * Time.deltaTime, worldAxis ? Space.World : Space.Self);
 
         // If Laser is out of bounds
         if (transform.position.y <= SpaceShooterData.LaserBoundLimitsY.x || transform.position.y >= SpaceShooterData.LaserBoundLimitsY.y)
         {
-            // If there's a parent, destroy it
-            if (transform.parent != null)
-            {
-                Destroy(transform.parent.gameObject);
-            }
-
             Destroy(gameObject);
         }
     }

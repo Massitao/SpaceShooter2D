@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class Enemy : EnemyShooterBase
+public class RookieEnemy : EnemyShooterBase
 {
     #region Variables
     #region Components
@@ -13,17 +13,19 @@ public class Enemy : EnemyShooterBase
     #region Animator
     [Header("Animator References")]
     [SerializeField] private string enemyAnim_DeathTrigger;
-    private int enemyAnim_DeathTriggerHash => Animator.StringToHash(enemyAnim_DeathTrigger);
+    private int enemyAnim_DeathTriggerHash;
     #endregion
 
 
     [Header("Enemy Move")]
     [SerializeField] private float enemySpeed = 4f;
+    [SerializeField] private float enemyExplosionSpeed = 2f;
 
 
     [Header("Enemy Shoot")]
     [SerializeField] private GameObject laserPrefab;
-    [SerializeField] private Vector3 laserSpawnOffset;
+    [SerializeField] private Vector2 laserLeftSpawnOffset;
+    [SerializeField] private Vector2 laserRightSpawnOffset;
     [SerializeField] private Vector2 fireRate = new Vector2(2f, 4f);
 
     [SerializeField] [Range(0, 30)] private int enemyProjectileLayer;
@@ -42,6 +44,13 @@ public class Enemy : EnemyShooterBase
 
 
     #region MonoBehaviour Methods
+    protected override void Start()
+    {
+        base.Start();
+
+        enemyAnim_DeathTriggerHash = Animator.StringToHash(enemyAnim_DeathTrigger);
+    }
+
     // Update is called once per frame
     private void Update()
     {
@@ -106,12 +115,8 @@ public class Enemy : EnemyShooterBase
                 fireRateTimer = Time.time + Random.Range(fireRate.x, fireRate.y);
 
                 // Ignore own lasers
-                Transform[] lasersToIgnore = Instantiate(laserPrefab, transform.position + laserSpawnOffset, Quaternion.identity).GetComponentsInChildren<Transform>();
-                for (int i = 0; i < lasersToIgnore.Length; i++)
-                {
-                    // Set Enemy Projectile Laser
-                    lasersToIgnore[i].gameObject.layer = enemyProjectileLayer;
-                }
+                Instantiate(laserPrefab, transform.position + (Vector3)laserLeftSpawnOffset, Quaternion.identity).transform.gameObject.layer = enemyProjectileLayer;
+                Instantiate(laserPrefab, transform.position + (Vector3)laserRightSpawnOffset, Quaternion.identity).transform.gameObject.layer = enemyProjectileLayer;
 
                 // Play Shoot soundclip
                 AudioManager.Instance?.PlayOneShotClip(shootClip);
@@ -131,7 +136,7 @@ public class Enemy : EnemyShooterBase
     private void Explode()
     {
         enemyCol.enabled = false;
-        enemySpeed = 2;
+        enemySpeed = enemyExplosionSpeed;
 
         enemyAnim.SetTrigger(enemyAnim_DeathTriggerHash);
         enemyAudioSource.PlayOneShot(explosionClip);

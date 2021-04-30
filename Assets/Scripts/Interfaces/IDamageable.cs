@@ -7,8 +7,8 @@
     int EntityMaxHealth { get; set; }
 
 
-    // Use this event to alert listeners when this Entity gets damaged
-    event System.Action<int> OnEntityDamaged;
+    // Use this event to alert listeners when this Entity gets Damaged / Healed
+    event System.Action<int> OnEntityHealthChange;
 
     // Use this event to alert listeners when this Entity dies
     event System.Action<IDamageable> OnEntityKilled;
@@ -19,4 +19,9 @@
 
     // Kills entity
     void Death();
+}
+
+public interface IHealable : IDamageable
+{
+    void Heal(int amountToHeal);
 }

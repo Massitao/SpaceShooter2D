@@ -111,9 +111,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6690a842133954f409496e7261d20ca1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  entityHealth: 1
+  entityMaxHealth: 1
+  scoreToGive: 5
   asteroidMoveSpeed: 2
   asteroidRotateAnglePerSecond: 45
+  collisionDamage: 3
   explosionPrefab: {fileID: 3420214906567672560, guid: 9f7042ea233eef1428062a583c81ce52,
     type: 3}
-  scoreToGive: 5
+  asteroidDestroyDelay: 0.1

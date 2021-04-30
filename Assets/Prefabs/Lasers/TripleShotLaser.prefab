@@ -10,7 +10,7 @@ PrefabInstance:
     - target: {fileID: 2716096619162409450, guid: e6d94afe478a45148ab7019023453c26,
         type: 3}
       propertyPath: m_Name
-      value: EnemyLaser
+      value: TripleShotLaser
       objectReference: {fileID: 0}
     - target: {fileID: 3822815693143464616, guid: e6d94afe478a45148ab7019023453c26,
         type: 3}
@@ -70,27 +70,17 @@ PrefabInstance:
     - target: {fileID: 5663592384824529076, guid: e6d94afe478a45148ab7019023453c26,
         type: 3}
       propertyPath: m_Color.b
-      value: 0.36320752
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5663592384824529076, guid: e6d94afe478a45148ab7019023453c26,
         type: 3}
       propertyPath: m_Color.g
-      value: 0.4050624
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5663592384824529076, guid: e6d94afe478a45148ab7019023453c26,
         type: 3}
       propertyPath: m_Color.r
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6883474428334785022, guid: e6d94afe478a45148ab7019023453c26,
-        type: 3}
-      propertyPath: moveDir.y
-      value: -1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6883474428334785022, guid: e6d94afe478a45148ab7019023453c26,
-        type: 3}
-      propertyPath: worldAxis
-      value: 1
+      value: 0.14285529
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e6d94afe478a45148ab7019023453c26, type: 3}

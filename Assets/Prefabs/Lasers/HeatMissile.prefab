@@ -133,9 +133,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2eb85f2c7adac364ea968c29418aecd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  missileSpeed: 11
-  angularSpeed: 360
+  laserSpeed: 11
   damage: 1
+  angularSpeed: 360
+  worldAxis: 0
+  moveDir: {x: 0, y: 1}
   radiusDetection: 20
   detectionLM:
     serializedVersion: 2
