@@ -21,6 +21,16 @@ public class RookieEnemy : EnemyShooterBase
     [SerializeField] private float enemySpeed = 4f;
     [SerializeField] private float enemyExplosionSpeed = 2f;
 
+    [Header("ZigZag Move")]
+    [SerializeField] private float zigZagSpeedX;
+    [SerializeField] private float zigZagSpeedY;
+    [SerializeField] private float zigZagMaxMove;
+    [SerializeField] [Range(0f, 1f)] private float zigZagSelectionPercentage;
+
+    private float startPosX;
+    private bool moveZigZag;
+    private bool movingRight;
+
 
     [Header("Enemy Shoot")]
     [SerializeField] private GameObject laserPrefab;
@@ -47,6 +57,9 @@ public class RookieEnemy : EnemyShooterBase
     protected override void Start()
     {
         base.Start();
+
+        startPosX = transform.position.x;
+        if (Random.value < zigZagSelectionPercentage) moveZigZag = true;
 
         enemyAnim_DeathTriggerHash = Animator.StringToHash(enemyAnim_DeathTrigger);
     }
@@ -87,8 +100,8 @@ public class RookieEnemy : EnemyShooterBase
 
     protected override void Move()
     {
-        // Move downwards
-        transform.Translate(Vector3.down * enemySpeed * Time.deltaTime);
+        if (moveZigZag) ZigZagMove();
+        else NormalMove();
 
         // If the enemy is out of bounds, teleport it above the screen in a new X position
         if (transform.position.y <= SpaceShooterData.EnemyBoundLimitsY.x)
@@ -122,6 +135,24 @@ public class RookieEnemy : EnemyShooterBase
                 AudioManager.Instance?.PlayOneShotClip(shootClip);
             }
         }
+    }
+
+    private void NormalMove()
+    {
+        // Move downwards
+        transform.Translate(Vector3.down * enemySpeed * Time.deltaTime);
+    }
+    private void ZigZagMove()
+    {
+        // Move in ZigZag
+        if (transform.position.x >= startPosX + zigZagMaxMove) movingRight = false;
+        if (transform.position.x <= startPosX - zigZagMaxMove) movingRight = true;
+
+        Vector2 dirToMove = (movingRight ? Vector2.down + Vector2.right : Vector2.down + Vector2.left).normalized;
+        dirToMove.x *= zigZagSpeedX;
+        dirToMove.y *= zigZagSpeedY;
+
+        transform.Translate(dirToMove * Time.deltaTime);
     }
 
 

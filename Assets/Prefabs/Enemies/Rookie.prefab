@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 249818808768911342}
   - component: {fileID: 7720676442426054964}
   m_Layer: 10
-  m_Name: Enemy
+  m_Name: Rookie
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -246,6 +246,10 @@ MonoBehaviour:
   enemyAnim_DeathTrigger: OnEnemyDeath
   enemySpeed: 6
   enemyExplosionSpeed: 2
+  zigZagSpeedX: 2
+  zigZagSpeedY: 6
+  zigZagMaxMove: 2
+  zigZagSelectionPercentage: 0.3
   laserPrefab: {fileID: 8704510761869805030, guid: aa26557520e549e4fa095625b8974e23,
     type: 3}
   laserLeftSpawnOffset: {x: -0.2, y: -1.4}
