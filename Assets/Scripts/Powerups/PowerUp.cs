@@ -44,7 +44,7 @@ public class PowerUp : MonoBehaviour
         // Destroy if it reaches the Despawn Point
         if (transform.position.y <= SpaceShooterData.EnemyBoundLimitsY.x)
         {
-            Destroy(gameObject);
+            gameObject.SetActive(false);
         }
     }
 
@@ -54,7 +54,7 @@ public class PowerUp : MonoBehaviour
         if (collision.TryGetComponent(out Ship player))
         {
             PickUp(player);
-            Destroy(gameObject);
+            gameObject.SetActive(false);
         }
     }
     #endregion

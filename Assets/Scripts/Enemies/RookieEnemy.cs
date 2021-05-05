@@ -19,7 +19,7 @@ public class RookieEnemy : EnemyShooterBase
 
     [Header("Enemy Move")]
     [SerializeField] private float enemySpeed = 4f;
-    [SerializeField] private float enemyExplosionSpeed = 2f;
+    [SerializeField] [Range(0f, 1f)] private float enemyExplosionSpeedReduction = 0.5f;
 
     [Header("ZigZag Move")]
     [SerializeField] private float zigZagSpeedX;
@@ -54,13 +54,18 @@ public class RookieEnemy : EnemyShooterBase
 
 
     #region MonoBehaviour Methods
-    protected override void Start()
+    protected override void OnEnable()
     {
-        base.Start();
+        base.OnEnable();
+
+        enemyCol.enabled = true;
 
         startPosX = transform.position.x;
-        if (Random.value < zigZagSelectionPercentage) moveZigZag = true;
+        moveZigZag = Random.value < zigZagSelectionPercentage;
+    }
 
+    protected void Start()
+    {
         enemyAnim_DeathTriggerHash = Animator.StringToHash(enemyAnim_DeathTrigger);
     }
 
@@ -127,12 +132,25 @@ public class RookieEnemy : EnemyShooterBase
                 // Update timer
                 fireRateTimer = Time.time + Random.Range(fireRate.x, fireRate.y);
 
-                // Ignore own lasers
-                Instantiate(laserPrefab, transform.position + (Vector3)laserLeftSpawnOffset, Quaternion.identity).transform.gameObject.layer = enemyProjectileLayer;
-                Instantiate(laserPrefab, transform.position + (Vector3)laserRightSpawnOffset, Quaternion.identity).transform.gameObject.layer = enemyProjectileLayer;
-
                 // Play Shoot soundclip
                 AudioManager.Instance?.PlayOneShotClip(shootClip);
+
+                // Ignore own lasers
+                if (ObjectPool.Instance != null)
+                {
+                    GameObject laser = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.EnemyLaser);
+                    laser.transform.position = transform.position + (Vector3)laserLeftSpawnOffset;
+                    laser.transform.rotation = Quaternion.identity;
+
+                    laser = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.EnemyLaser);
+                    laser.transform.position = transform.position + (Vector3)laserRightSpawnOffset;
+                    laser.transform.rotation = Quaternion.identity;
+                }
+                else
+                {
+                    Instantiate(laserPrefab, transform.position + (Vector3)laserLeftSpawnOffset, Quaternion.identity);
+                    Instantiate(laserPrefab, transform.position + (Vector3)laserRightSpawnOffset, Quaternion.identity);
+                }
             }
         }
     }
@@ -140,7 +158,7 @@ public class RookieEnemy : EnemyShooterBase
     private void NormalMove()
     {
         // Move downwards
-        transform.Translate(Vector3.down * enemySpeed * Time.deltaTime);
+        transform.Translate(Vector3.down * (enemySpeed * (enemyCol.enabled ? 1f : enemyExplosionSpeedReduction)) * Time.deltaTime);
     }
     private void ZigZagMove()
     {
@@ -149,8 +167,8 @@ public class RookieEnemy : EnemyShooterBase
         if (transform.position.x <= startPosX - zigZagMaxMove) movingRight = true;
 
         Vector2 dirToMove = (movingRight ? Vector2.down + Vector2.right : Vector2.down + Vector2.left).normalized;
-        dirToMove.x *= zigZagSpeedX;
-        dirToMove.y *= zigZagSpeedY;
+        dirToMove.x *= zigZagSpeedX * (enemyCol.enabled ? 1f : enemyExplosionSpeedReduction);
+        dirToMove.y *= zigZagSpeedY * (enemyCol.enabled ? 1f : enemyExplosionSpeedReduction);
 
         transform.Translate(dirToMove * Time.deltaTime);
     }
@@ -167,7 +185,6 @@ public class RookieEnemy : EnemyShooterBase
     private void Explode()
     {
         enemyCol.enabled = false;
-        enemySpeed = enemyExplosionSpeed;
 
         enemyAnim.SetTrigger(enemyAnim_DeathTriggerHash);
         enemyAudioSource.PlayOneShot(explosionClip);

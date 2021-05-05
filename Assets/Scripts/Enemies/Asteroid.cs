@@ -14,15 +14,14 @@ public class Asteroid : EnemyBase
 
 
     [Header("Asteroid Explosion")]
-    [SerializeField] private GameObject explosionPrefab;
     [SerializeField] private float asteroidDestroyDelay;
     #endregion
 
 
     #region MonoBehaviour Methods
-    protected override void Start()
+    protected override void OnEnable()
     {
-        base.Start();
+        base.OnEnable();
 
         // Setting random rotation direction
         inverseSpin = Random.value >= .5f;
@@ -30,7 +29,7 @@ public class Asteroid : EnemyBase
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         Move();
         Rotate();
@@ -73,12 +72,14 @@ public class Asteroid : EnemyBase
     {
         AddScore();
 
-        // Instantiate explosion and destroy this GameObject after 0.1f seconds
-        Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+        // Instantiate explosion and disable this GameObject after 0.1f seconds
+        GameObject explosion = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.Explosion);
+        explosion.transform.position = transform.position;
+        explosion.transform.rotation = Quaternion.identity;
 
         base.Death();
 
-        DestroyEnemy(.1f);
+        DisableEnemy(.1f);
     }
     #endregion
 }

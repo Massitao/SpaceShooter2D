@@ -21,7 +21,7 @@ public class HeatMissile : LaserBase
 
 
     #region MonoBehaviour Methods
-    private void Start()
+    private void OnEnable()
     {
         StartCoroutine(HeatSeek());
     }
@@ -46,7 +46,7 @@ public class HeatMissile : LaserBase
         if (collision.gameObject.TryGetComponent(out IDamageable damageableEntity))
         {
             damageableEntity.TakeDamage(damage);
-            Destroy(gameObject);
+            gameObject.SetActive(false);
         }
     }
 
@@ -72,7 +72,7 @@ public class HeatMissile : LaserBase
         // If Laser is out of bounds
         if (transform.position.y <= SpaceShooterData.LaserBoundLimitsY.x || transform.position.y >= SpaceShooterData.LaserBoundLimitsY.y)
         {
-            Destroy(gameObject);
+            gameObject.SetActive(false);
         }
     }
 

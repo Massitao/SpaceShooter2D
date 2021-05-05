@@ -5974,7 +5974,7 @@ MonoBehaviour:
   shipThrusterFuel: 1
   shipThrusterMinumumFuelAfterExhaust: 0.25
   shipThrusterWasteSpeed: 0.2
-  shipThrusterRecoverySpeed: 0.4
+  shipThrusterRecoverySpeed: 0.8
   shipThrusterRecoveryCooldown: 2
   laserPrefab: {fileID: 2716096619162409450, guid: e6d94afe478a45148ab7019023453c26,
     type: 3}
@@ -6251,7 +6251,7 @@ MonoBehaviour:
   beamParticleDeactivationPercentage: 0.5
   beamLM:
     serializedVersion: 2
-    m_Bits: 1024
+    m_Bits: 7168
   currentBeamState: 0
   chargeUpClip: {fileID: 8300000, guid: 7983de97e16e8a840ba7f77858d20f0e, type: 3}
   beamFiringClip: {fileID: 8300000, guid: e9a608c5dafbc904ab32d7e23f1936fe, type: 3}

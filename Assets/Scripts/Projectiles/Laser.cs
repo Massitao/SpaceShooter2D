@@ -24,7 +24,7 @@ public class Laser : LaserBase
         if (collision.gameObject.TryGetComponent(out IDamageable damageableEntity))
         {
             damageableEntity.TakeDamage(damage);
-            Destroy(gameObject);
+            gameObject.SetActive(false);
         }
     }
 
@@ -36,7 +36,7 @@ public class Laser : LaserBase
         // If Laser is out of bounds
         if (transform.position.y <= SpaceShooterData.LaserBoundLimitsY.x || transform.position.y >= SpaceShooterData.LaserBoundLimitsY.y)
         {
-            Destroy(gameObject);
+            gameObject.SetActive(false);
         }
     }
     #endregion

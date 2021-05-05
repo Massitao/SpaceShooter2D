@@ -5,23 +5,20 @@ public class SpawnManager : MonoSingleton<SpawnManager>
 {
     #region Variables
     // Defined Entities to Spawn
-    private enum SpawnEntity { Enemy, Asteroid, PowerUp }
+    private enum SpawnEntity { Rookie, Asteroid, PowerUp }
 
 
-    [Header("Enemy Spawner")]
-    [SerializeField] private GameObject enemyPrefab;
+    [Header("Rookie Spawner")]
     private Coroutine enemyRespawnCoroutine;
     private WaitForSeconds enemySpawnRate = new WaitForSeconds(2f);
 
 
     [Header("Asteroid Spawner")]
-    [SerializeField] private GameObject asteroidPrefab;
     private Coroutine asteroidRespawnCoroutine;
     private WaitForSeconds asteroidSpawnRate = new WaitForSeconds(5f);
 
 
     [Header("PowerUp Spawner")]
-    [SerializeField] private GameObject powerUpPrefab;
     private Coroutine powerUpRespawnCoroutine;
     private WaitForSeconds powerUpSpawnRate = new WaitForSeconds(7f);
     #endregion
@@ -31,7 +28,7 @@ public class SpawnManager : MonoSingleton<SpawnManager>
     // Start is called before the first frame update
     private void Start()
     {
-        StartEntitySpawn(SpawnEntity.Enemy);
+        StartEntitySpawn(SpawnEntity.Rookie);
         StartEntitySpawn(SpawnEntity.Asteroid);
         StartEntitySpawn(SpawnEntity.PowerUp);
     }
@@ -42,10 +39,10 @@ public class SpawnManager : MonoSingleton<SpawnManager>
     {
         switch (spawnEntity)
         {
-            case SpawnEntity.Enemy:
+            case SpawnEntity.Rookie:
                 if (enemyRespawnCoroutine == null)
                 {
-                    enemyRespawnCoroutine = StartCoroutine(SpawnEnemyEntity(enemyPrefab, enemySpawnRate));
+                    enemyRespawnCoroutine = StartCoroutine(SpawnEnemyEntity(spawnEntity, enemySpawnRate));
                 }
 
                 break;
@@ -53,7 +50,7 @@ public class SpawnManager : MonoSingleton<SpawnManager>
             case SpawnEntity.Asteroid:
                 if (asteroidRespawnCoroutine == null)
                 {
-                    asteroidRespawnCoroutine = StartCoroutine(SpawnEnemyEntity(asteroidPrefab, asteroidSpawnRate));
+                    asteroidRespawnCoroutine = StartCoroutine(SpawnEnemyEntity(spawnEntity, asteroidSpawnRate));
                 }
 
                 break;
@@ -61,7 +58,7 @@ public class SpawnManager : MonoSingleton<SpawnManager>
             case SpawnEntity.PowerUp:
                 if (powerUpRespawnCoroutine == null)
                 {
-                    powerUpRespawnCoroutine = StartCoroutine(SpawnPowerUp());
+                    powerUpRespawnCoroutine = StartCoroutine(SpawnEnemyEntity(spawnEntity, powerUpSpawnRate));
                 }
 
                 break;
@@ -71,7 +68,7 @@ public class SpawnManager : MonoSingleton<SpawnManager>
     {
         switch (spawnEntity)
         {
-            case SpawnEntity.Enemy:
+            case SpawnEntity.Rookie:
                 if (enemyRespawnCoroutine != null)
                 {
                     StopCoroutine(enemyRespawnCoroutine);
@@ -101,12 +98,12 @@ public class SpawnManager : MonoSingleton<SpawnManager>
     }
     public void StopAllSpawns()
     {
-        StopEntitySpawn(SpawnEntity.Enemy);
+        StopEntitySpawn(SpawnEntity.Rookie);
         StopEntitySpawn(SpawnEntity.Asteroid);
         StopEntitySpawn(SpawnEntity.PowerUp);
     }
 
-    private IEnumerator SpawnEnemyEntity(GameObject enemyToSpawn, WaitForSeconds spawnDelay)
+    private IEnumerator SpawnEnemyEntity(SpawnEntity spawnEntity, WaitForSeconds spawnDelay)
     {
         Vector2 spawnPos = Vector2.zero;
 
@@ -114,25 +111,43 @@ public class SpawnManager : MonoSingleton<SpawnManager>
         {
             yield return spawnDelay;
 
-            spawnPos = new Vector3(Random.Range(-SpaceShooterData.SpawnX, SpaceShooterData.SpawnX), SpaceShooterData.EnemyBoundLimitsY.y);
-            GameObject newEnemy = Instantiate(enemyToSpawn, spawnPos, Quaternion.identity, transform);
-        }
-    }
-    private IEnumerator SpawnPowerUp()
-    {
-        Vector2 spawnPos = Vector2.zero;
+            switch (spawnEntity)
+            {
+                case SpawnEntity.Rookie:
 
-        while (true)
-        {
-            yield return powerUpSpawnRate;
+                    spawnPos = new Vector3(Random.Range(-SpaceShooterData.SpawnX, SpaceShooterData.SpawnX), SpaceShooterData.EnemyBoundLimitsY.y);
 
-            spawnPos = new Vector3(Random.Range(-SpaceShooterData.SpawnX * .9f, SpaceShooterData.SpawnX * .9f), SpaceShooterData.EnemyBoundLimitsY.y);
-            PowerUp newPowerUp = Instantiate(powerUpPrefab, spawnPos, Quaternion.identity, transform).GetComponent<PowerUp>();
+                    GameObject newEnemy = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.Rookie);
+                    newEnemy.transform.position = spawnPos;
+                    newEnemy.transform.rotation = Quaternion.identity;
 
-            int randomPowerUp = Random.Range(0, System.Enum.GetNames(typeof(PowerUp.Type)).Length);
-            randomPowerUp = (randomPowerUp == (int)PowerUp.Type.HeatSeek && Random.value > 0.5f) ? (int)PowerUp.Type.TripleShot : randomPowerUp;
+                    break;
 
-            newPowerUp.SetPowerupType((PowerUp.Type)randomPowerUp);
+                case SpawnEntity.Asteroid:
+
+                    spawnPos = new Vector3(Random.Range(-SpaceShooterData.SpawnX, SpaceShooterData.SpawnX), SpaceShooterData.EnemyBoundLimitsY.y);
+
+                    GameObject newAsteroid = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.Asteroid);
+                    newAsteroid.transform.position = spawnPos;
+                    newAsteroid.transform.rotation = Quaternion.identity;
+
+                    break;
+
+                case SpawnEntity.PowerUp:
+
+                    spawnPos = new Vector3(Random.Range(-SpaceShooterData.SpawnX * .9f, SpaceShooterData.SpawnX * .9f), SpaceShooterData.EnemyBoundLimitsY.y);
+
+                    PowerUp newPowerUp = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.Powerup).GetComponent<PowerUp>();
+                    newPowerUp.transform.position = spawnPos;
+                    newPowerUp.transform.rotation = Quaternion.identity;
+
+                    int randomPowerUp = Random.Range(0, System.Enum.GetNames(typeof(PowerUp.Type)).Length);
+                    randomPowerUp = (randomPowerUp == (int)PowerUp.Type.HeatSeek && Random.value > 0.5f) ? (int)PowerUp.Type.TripleShot : randomPowerUp;
+
+                    newPowerUp.SetPowerupType((PowerUp.Type)randomPowerUp);
+
+                    break;
+            }
         }
     }
     #endregion

@@ -204,6 +204,11 @@ public class LaserBeam : MonoBehaviour
                 {
                     entity.TakeDamage(1);
                 }
+
+                if (beamEntitiesToDestroy[enemyIndex].TryGetComponent(out LaserBase laser))
+                {
+                    laser.gameObject.SetActive(false);
+                }
             }
             yield return null;
         }

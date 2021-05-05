@@ -4,6 +4,6 @@ public class Explosion : MonoBehaviour
 {
     public void Explode()
     {
-        Destroy(gameObject);
+        gameObject.SetActive(false);
     }
 }

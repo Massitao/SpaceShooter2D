@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 public abstract class EnemyShooterBase : EnemyBase
 {
@@ -54,7 +55,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
 
 
     #region MonoBehaviour Methods
-    protected virtual void Start()
+    protected virtual void OnEnable()
     {
         // Setting Entity Health to Max Health
         EntityHealth = EntityMaxHealth;
@@ -117,16 +118,22 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         OnEntityKilled?.Invoke(this);
     }
 
-    // Destroys the GameObject
-    protected virtual void DestroyEnemy()
+
+    // Disables the GameObject
+    public virtual void DisableEnemy()
     {
-        Destroy(gameObject);
+        gameObject.SetActive(false);
     }
 
-    // Destroys the GameObject with a Delay
-    protected virtual void DestroyEnemy(float delay)
+    // Disables the GameObject with a Delay
+    public virtual void DisableEnemy(float delay)
     {
-        Destroy(gameObject, delay);
+        StartCoroutine(DisableEnemyCoroutine(delay));
+    }
+    protected IEnumerator DisableEnemyCoroutine(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        DisableEnemy();
     }
     #endregion
 }
