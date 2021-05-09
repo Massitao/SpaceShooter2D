@@ -8161,6 +8161,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: Ship
       objectReference: {fileID: 0}
+    - target: {fileID: 7222636168036227811, guid: 43b64af69b38583479150f4b51a44f7d,
+        type: 3}
+      propertyPath: virusMoveChangeAmount
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7222636168036227811, guid: 43b64af69b38583479150f4b51a44f7d,
+        type: 3}
+      propertyPath: virusMoveChangeUpdateTime
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 7222636168036227813, guid: 43b64af69b38583479150f4b51a44f7d,
         type: 3}
       propertyPath: m_RootOrder

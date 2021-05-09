@@ -159,6 +159,13 @@ public class Ship : MonoBehaviour, IHealable
     private int shieldHealth = 0;
     private int shieldMaxHealth = 3;
     private bool shieldActive;
+
+    [Header("Pilot Virus")]
+    [SerializeField] private Vector2 virusMoveDir;
+
+    private Coroutine virusCoroutine;
+    private WaitForSeconds virusDuration = new WaitForSeconds(10f);
+    private bool virusActive => virusCoroutine != null;
     #endregion
 
     #region Audio
@@ -245,12 +252,16 @@ public class Ship : MonoBehaviour, IHealable
     private void Move()
     {
         // Move Ship - Uses Normalized Input and Selects a Speed
-        transform.Translate(moveInput.normalized * SpeedSelection() * Time.deltaTime);
+        transform.Translate(MoveDirection() * SpeedSelection() * Time.deltaTime);
 
         MoveHorizontalWrap();
         MoveVerticalClamp();
     }
 
+    private Vector2 MoveDirection()
+    {
+        return virusActive ? moveInput.normalized * virusMoveDir : moveInput.normalized;
+    }
     private float SpeedSelection()
     {
         // If Player is using the Thrusters, apply Thruster speed. Else, keep normal ship speed
@@ -661,6 +672,22 @@ public class Ship : MonoBehaviour, IHealable
     }
     #endregion
 
+    #region Virus
+    private IEnumerator VirusCoroutine()
+    {
+        virusMoveDir = Vector2.one;
+
+        while (virusMoveDir == Vector2.one)
+        {
+            virusMoveDir.x *= Random.value <= 0.5f ? -1 : 1;
+            virusMoveDir.y *= Random.value <= 0.5f ? -1 : 1;
+        }
+
+        yield return virusDuration;
+        virusCoroutine = null;
+    }
+    #endregion
+
     #region PowerUps
     /// <summary>
     /// Triggers a ship ability.
@@ -714,6 +741,11 @@ public class Ship : MonoBehaviour, IHealable
             case PowerUp.Type.Beam:
                 PrepareBeam();
                 break;
+
+            case PowerUp.Type.Virus:
+                if (virusCoroutine != null) StopPowerUp(PowerUp.Type.Virus);
+                virusCoroutine = StartCoroutine(VirusCoroutine());
+                break;
         }
     }
 
@@ -755,6 +787,14 @@ public class Ship : MonoBehaviour, IHealable
 
             case PowerUp.Type.Shield:
                 StopShield();
+                break;
+
+            case PowerUp.Type.Virus:
+                if (virusCoroutine != null)
+                {
+                    StopCoroutine(virusCoroutine);
+                    virusCoroutine = null;
+                }
                 break;
         }
     }

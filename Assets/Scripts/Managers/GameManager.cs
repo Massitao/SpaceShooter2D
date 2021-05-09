@@ -4,7 +4,7 @@ public class GameManager : MonoSingleton<GameManager>
 {
     #region Variables
     [Header("Ship Reference")]
-    private Ship playerShip;
+    public Ship playerShip;
 
     [Header("Game Status")]
     [SerializeField] private int score;

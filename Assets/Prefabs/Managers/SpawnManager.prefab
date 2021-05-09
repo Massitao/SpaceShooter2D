@@ -66,9 +66,9 @@ MonoBehaviour:
   - name: Ammo
     powerUp: 6
     spawnWeight: 5
-  totalWeight: 0
-  newWeight: 0
-  times: 0
+  - name: Pilot Virus
+    powerUp: 7
+    spawnWeight: 2
 --- !u!114 &7219805854670349758
 MonoBehaviour:
   m_ObjectHideFlags: 0
