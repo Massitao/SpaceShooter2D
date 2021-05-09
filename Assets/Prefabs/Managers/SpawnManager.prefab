@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 748414047065262236}
   - component: {fileID: 748414047065262227}
+  - component: {fileID: 7219805854670349758}
   m_Layer: 0
   m_Name: SpawnManager
   m_TagString: Untagged
@@ -43,9 +44,42 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a52ecee5f2879574c83eb6c6d10a8ca8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyPrefab: {fileID: 3499002942499517956, guid: a2e59650bdc33ec43876e77cd0e593a8,
-    type: 3}
-  asteroidPrefab: {fileID: 6680430017812846841, guid: b197040a4611be8449eef1fa37ba5fbd,
-    type: 3}
-  powerUpPrefab: {fileID: 5210187608902166464, guid: ffacbf85ae23d7740b9ee6e9a09301a6,
-    type: 3}
+  powerupTable:
+  - name: Triple Shot
+    powerUp: 0
+    spawnWeight: 3
+  - name: Heat Seek
+    powerUp: 1
+    spawnWeight: 2
+  - name: Beam
+    powerUp: 2
+    spawnWeight: 1
+  - name: Speed
+    powerUp: 3
+    spawnWeight: 4
+  - name: Shield
+    powerUp: 4
+    spawnWeight: 3
+  - name: Life
+    powerUp: 5
+    spawnWeight: 3
+  - name: Ammo
+    powerUp: 6
+    spawnWeight: 5
+  totalWeight: 0
+  newWeight: 0
+  times: 0
+--- !u!114 &7219805854670349758
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 748414047065262226}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d4f0f672d5242249b5a9e3700b83026, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  waves: []
+  initWaveDelay: 0

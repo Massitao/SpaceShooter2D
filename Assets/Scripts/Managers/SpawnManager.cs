@@ -1,24 +1,23 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+
+[System.Serializable]
+public class PowerupSpawn
+{
+    public string name;
+    public PowerUp.Type powerUp;
+    public int spawnWeight;
+}
 
 public class SpawnManager : MonoSingleton<SpawnManager>
 {
     #region Variables
-    // Defined Entities to Spawn
-    private enum SpawnEntity { Rookie, Asteroid, PowerUp }
-
-
-    [Header("Rookie Spawner")]
-    private Coroutine enemyRespawnCoroutine;
-    private WaitForSeconds enemySpawnRate = new WaitForSeconds(2f);
-
-
-    [Header("Asteroid Spawner")]
-    private Coroutine asteroidRespawnCoroutine;
-    private WaitForSeconds asteroidSpawnRate = new WaitForSeconds(5f);
-
-
     [Header("PowerUp Spawner")]
+    [SerializeField] private PowerupSpawn[] powerupTable;
+    private int totalWeight;
+    private int newWeight;
+
     private Coroutine powerUpRespawnCoroutine;
     private WaitForSeconds powerUpSpawnRate = new WaitForSeconds(7f);
     #endregion
@@ -28,127 +27,78 @@ public class SpawnManager : MonoSingleton<SpawnManager>
     // Start is called before the first frame update
     private void Start()
     {
-        StartEntitySpawn(SpawnEntity.Rookie);
-        StartEntitySpawn(SpawnEntity.Asteroid);
-        StartEntitySpawn(SpawnEntity.PowerUp);
+        for (int i = 0; i < powerupTable.Length; i++)
+        {
+            totalWeight += powerupTable[i].spawnWeight;
+        }
+
+        powerUpRespawnCoroutine = StartCoroutine(SpawnPowerUp());
     }
     #endregion
 
     #region Custom Methods
-    private void StartEntitySpawn(SpawnEntity spawnEntity)
+    public GameObject SpawnEnemy(SpaceShooterData.Enemies enemyToSpawn)
     {
-        switch (spawnEntity)
+        GameObject newEnemy = null;
+
+        switch (enemyToSpawn)
         {
-            case SpawnEntity.Rookie:
-                if (enemyRespawnCoroutine == null)
-                {
-                    enemyRespawnCoroutine = StartCoroutine(SpawnEnemyEntity(spawnEntity, enemySpawnRate));
-                }
-
-                break;
-
-            case SpawnEntity.Asteroid:
-                if (asteroidRespawnCoroutine == null)
-                {
-                    asteroidRespawnCoroutine = StartCoroutine(SpawnEnemyEntity(spawnEntity, asteroidSpawnRate));
-                }
-
-                break;
-
-            case SpawnEntity.PowerUp:
-                if (powerUpRespawnCoroutine == null)
-                {
-                    powerUpRespawnCoroutine = StartCoroutine(SpawnEnemyEntity(spawnEntity, powerUpSpawnRate));
-                }
-
+            case SpaceShooterData.Enemies.Rookie:
+                newEnemy = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.Rookie);
                 break;
         }
+
+        newEnemy.transform.position = new Vector2(Random.Range(-SpaceShooterData.SpawnX, SpaceShooterData.SpawnX), SpaceShooterData.EnemyBoundLimitsY.y);
+        newEnemy.transform.rotation = Quaternion.identity;
+
+        return newEnemy;
     }
-    private void StopEntitySpawn(SpawnEntity spawnEntity)
+    public GameObject SpawnEnemy(SpaceShooterData.Enemies enemyToSpawn, Vector2 pos)
     {
-        switch (spawnEntity)
+        GameObject newEnemy = null;
+
+        switch (enemyToSpawn)
         {
-            case SpawnEntity.Rookie:
-                if (enemyRespawnCoroutine != null)
-                {
-                    StopCoroutine(enemyRespawnCoroutine);
-                    enemyRespawnCoroutine = null;
-                }
-
-                break;
-
-            case SpawnEntity.Asteroid:
-                if (asteroidRespawnCoroutine != null)
-                {
-                    StopCoroutine(asteroidRespawnCoroutine);
-                    asteroidRespawnCoroutine = null;
-                }
-
-                break;
-
-            case SpawnEntity.PowerUp:
-                if (powerUpRespawnCoroutine != null)
-                {
-                    StopCoroutine(powerUpRespawnCoroutine);
-                    powerUpRespawnCoroutine = null;
-                }
-
+            case SpaceShooterData.Enemies.Rookie:
+                newEnemy = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.Rookie);
                 break;
         }
-    }
-    public void StopAllSpawns()
-    {
-        StopEntitySpawn(SpawnEntity.Rookie);
-        StopEntitySpawn(SpawnEntity.Asteroid);
-        StopEntitySpawn(SpawnEntity.PowerUp);
-    }
 
-    private IEnumerator SpawnEnemyEntity(SpawnEntity spawnEntity, WaitForSeconds spawnDelay)
-    {
-        Vector2 spawnPos = Vector2.zero;
+        newEnemy.transform.position = pos;
+        newEnemy.transform.rotation = Quaternion.identity;
 
+        return newEnemy;
+    }
+    private IEnumerator SpawnPowerUp()
+    {
         while (true)
         {
-            yield return spawnDelay;
+            yield return powerUpSpawnRate;
 
-            switch (spawnEntity)
+            PowerUp newPowerUp = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.Powerup).GetComponent<PowerUp>();
+            newPowerUp.transform.position = new Vector3(Random.Range(-SpaceShooterData.SpawnX * .9f, SpaceShooterData.SpawnX * .9f), SpaceShooterData.EnemyBoundLimitsY.y);
+            newPowerUp.transform.rotation = Quaternion.identity;
+
+            newWeight = Random.Range(0, totalWeight);
+
+            for (int i = 0; i < powerupTable.Length; i++)
             {
-                case SpawnEntity.Rookie:
-
-                    spawnPos = new Vector3(Random.Range(-SpaceShooterData.SpawnX, SpaceShooterData.SpawnX), SpaceShooterData.EnemyBoundLimitsY.y);
-
-                    GameObject newEnemy = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.Rookie);
-                    newEnemy.transform.position = spawnPos;
-                    newEnemy.transform.rotation = Quaternion.identity;
-
+                if (newWeight <= powerupTable[i].spawnWeight)
+                {
+                    newPowerUp.SetPowerupType(powerupTable[i].powerUp);
                     break;
-
-                case SpawnEntity.Asteroid:
-
-                    spawnPos = new Vector3(Random.Range(-SpaceShooterData.SpawnX, SpaceShooterData.SpawnX), SpaceShooterData.EnemyBoundLimitsY.y);
-
-                    GameObject newAsteroid = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.Asteroid);
-                    newAsteroid.transform.position = spawnPos;
-                    newAsteroid.transform.rotation = Quaternion.identity;
-
-                    break;
-
-                case SpawnEntity.PowerUp:
-
-                    spawnPos = new Vector3(Random.Range(-SpaceShooterData.SpawnX * .9f, SpaceShooterData.SpawnX * .9f), SpaceShooterData.EnemyBoundLimitsY.y);
-
-                    PowerUp newPowerUp = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.Powerup).GetComponent<PowerUp>();
-                    newPowerUp.transform.position = spawnPos;
-                    newPowerUp.transform.rotation = Quaternion.identity;
-
-                    int randomPowerUp = Random.Range(0, System.Enum.GetNames(typeof(PowerUp.Type)).Length);
-                    randomPowerUp = (randomPowerUp == (int)PowerUp.Type.HeatSeek && Random.value > 0.5f) ? (int)PowerUp.Type.TripleShot : randomPowerUp;
-
-                    newPowerUp.SetPowerupType((PowerUp.Type)randomPowerUp);
-
-                    break;
-            }
+                }
+                else
+                {
+                    newWeight -= powerupTable[i].spawnWeight;
+                }
+            }        
         }
+    }
+
+    public void StopAllSpawns()
+    {
+        StopCoroutine(powerUpRespawnCoroutine);
     }
     #endregion
 }

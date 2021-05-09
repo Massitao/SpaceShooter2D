@@ -66,6 +66,7 @@ public class RookieEnemy : EnemyShooterBase
 
     protected void Start()
     {
+        startPosX = transform.position.x;
         enemyAnim_DeathTriggerHash = Animator.StringToHash(enemyAnim_DeathTrigger);
     }
 
@@ -112,6 +113,7 @@ public class RookieEnemy : EnemyShooterBase
         if (transform.position.y <= SpaceShooterData.EnemyBoundLimitsY.x)
         {
             transform.position = new Vector3(Random.Range(-SpaceShooterData.SpawnX, SpaceShooterData.SpawnX), SpaceShooterData.EnemyBoundLimitsY.y, transform.position.z);
+            startPosX = transform.position.x;
         }
     }
     protected override void Shoot()

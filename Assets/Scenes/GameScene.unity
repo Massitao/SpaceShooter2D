@@ -6613,12 +6613,62 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!4 &1529115703 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1539917258806965226, guid: b780e08228b756f4ab0e6cfe19d42351,
-    type: 3}
-  m_PrefabInstance: {fileID: 1539917259995793373}
+--- !u!1 &1529115701
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1529115703}
+  - component: {fileID: 1529115702}
+  m_Layer: 0
+  m_Name: UIManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1529115702
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1529115701}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 741d68beba0c8d7428f1b3853732936c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  livesImage: {fileID: 844795885}
+  livesSprites:
+  - {fileID: 21300000, guid: ba53e111f0125654cabfd4eefaf3a657, type: 3}
+  - {fileID: 21300000, guid: 80fba5ece7697c44eacc036539c1b552, type: 3}
+  - {fileID: 21300000, guid: 482c8e4c0346b704aa5f1760c3c989d5, type: 3}
+  - {fileID: 21300000, guid: 9fe6f40efddf0b64fb68a3382b14a4db, type: 3}
+  ammoCountText: {fileID: 266304398}
+  ammoSlider: {fileID: 1909436494}
+  thrusterFuelSlider: {fileID: 1974695172}
+  thrusterCooldownSlider: {fileID: 2119311080}
+  scoreText: {fileID: 485268089}
+  gameOverText: {fileID: 1456383438}
+  restartText: {fileID: 1161141619}
+--- !u!4 &1529115703
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1529115701}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -2.6744933, y: 3.9172606, z: -1.4024177}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1109613604}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1546517248
 GameObject:
   m_ObjectHideFlags: 0
@@ -6919,18 +6969,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1638094293}
   m_CullTransparentMesh: 0
---- !u!114 &1717115385 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1539917258806965227, guid: b780e08228b756f4ab0e6cfe19d42351,
-    type: 3}
-  m_PrefabInstance: {fileID: 1539917259995793373}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 741d68beba0c8d7428f1b3853732936c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1744028639
 GameObject:
   m_ObjectHideFlags: 0
@@ -7462,7 +7500,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1717115385}
+      - m_Target: {fileID: 1529115702}
         m_MethodName: UpdateThrusterFuelSlider
         m_Mode: 0
         m_Arguments:
@@ -7782,7 +7820,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1717115385}
+      - m_Target: {fileID: 1529115702}
         m_MethodName: UpdateThrusterCooldownSlider
         m_Mode: 0
         m_Arguments:
@@ -7904,115 +7942,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 68eb5464579ee934e883c5164c7f1339, type: 3}
---- !u!1001 &1539917259995793373
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 1109613604}
-    m_Modifications:
-    - target: {fileID: 1539917258806965224, guid: b780e08228b756f4ab0e6cfe19d42351,
-        type: 3}
-      propertyPath: m_Name
-      value: UIManager
-      objectReference: {fileID: 0}
-    - target: {fileID: 1539917258806965226, guid: b780e08228b756f4ab0e6cfe19d42351,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 1539917258806965226, guid: b780e08228b756f4ab0e6cfe19d42351,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -2.6744933
-      objectReference: {fileID: 0}
-    - target: {fileID: 1539917258806965226, guid: b780e08228b756f4ab0e6cfe19d42351,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 3.9172606
-      objectReference: {fileID: 0}
-    - target: {fileID: 1539917258806965226, guid: b780e08228b756f4ab0e6cfe19d42351,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -1.4024177
-      objectReference: {fileID: 0}
-    - target: {fileID: 1539917258806965226, guid: b780e08228b756f4ab0e6cfe19d42351,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1539917258806965226, guid: b780e08228b756f4ab0e6cfe19d42351,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1539917258806965226, guid: b780e08228b756f4ab0e6cfe19d42351,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1539917258806965226, guid: b780e08228b756f4ab0e6cfe19d42351,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1539917258806965226, guid: b780e08228b756f4ab0e6cfe19d42351,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1539917258806965226, guid: b780e08228b756f4ab0e6cfe19d42351,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1539917258806965226, guid: b780e08228b756f4ab0e6cfe19d42351,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1539917258806965227, guid: b780e08228b756f4ab0e6cfe19d42351,
-        type: 3}
-      propertyPath: scoreText
-      value: 
-      objectReference: {fileID: 485268089}
-    - target: {fileID: 1539917258806965227, guid: b780e08228b756f4ab0e6cfe19d42351,
-        type: 3}
-      propertyPath: ammoSlider
-      value: 
-      objectReference: {fileID: 1909436494}
-    - target: {fileID: 1539917258806965227, guid: b780e08228b756f4ab0e6cfe19d42351,
-        type: 3}
-      propertyPath: livesImage
-      value: 
-      objectReference: {fileID: 844795885}
-    - target: {fileID: 1539917258806965227, guid: b780e08228b756f4ab0e6cfe19d42351,
-        type: 3}
-      propertyPath: restartText
-      value: 
-      objectReference: {fileID: 1161141619}
-    - target: {fileID: 1539917258806965227, guid: b780e08228b756f4ab0e6cfe19d42351,
-        type: 3}
-      propertyPath: gameOverText
-      value: 
-      objectReference: {fileID: 1456383438}
-    - target: {fileID: 1539917258806965227, guid: b780e08228b756f4ab0e6cfe19d42351,
-        type: 3}
-      propertyPath: ammoCountText
-      value: 
-      objectReference: {fileID: 266304398}
-    - target: {fileID: 1539917258806965227, guid: b780e08228b756f4ab0e6cfe19d42351,
-        type: 3}
-      propertyPath: thrusterFuelSlider
-      value: 
-      objectReference: {fileID: 1974695172}
-    - target: {fileID: 1539917258806965227, guid: b780e08228b756f4ab0e6cfe19d42351,
-        type: 3}
-      propertyPath: thrusterCooldownSlider
-      value: 
-      objectReference: {fileID: 2119311080}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: b780e08228b756f4ab0e6cfe19d42351, type: 3}
 --- !u!1001 &3033739983086129229
 PrefabInstance:
   m_ObjectHideFlags: 0
