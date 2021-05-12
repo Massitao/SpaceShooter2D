@@ -73,10 +73,7 @@ public class Asteroid : EnemyBase
         AddScore();
 
         // Instantiate explosion and disable this GameObject after 0.1f seconds
-        GameObject explosion = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.Explosion);
-        explosion.transform.position = transform.position;
-        explosion.transform.rotation = Quaternion.identity;
-
+        GameObject explosion = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.Explosion, transform.position, Quaternion.identity);
         base.Death();
 
         DisableEnemy(.1f);

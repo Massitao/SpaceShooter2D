@@ -53,6 +53,7 @@ public class GameManager : MonoSingleton<GameManager>
     {
         isGameOver = true;
         SpawnManager.Instance?.StopAllSpawns();
+        WaveManager.Instance?.StopWaveCoroutine();
     }
     public bool IsGameOver()
     {

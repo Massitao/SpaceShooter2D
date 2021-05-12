@@ -6,70 +6,110 @@ using UnityEngine;
 [System.Serializable]
 public class Wave
 {
-    public List<WaveEnemySpawnProperties> enemiesToSpawn;
+    [Range(0f, 15f)] public float nextWaveSpawnTime;
+    public uint minEnemiesLeftToProgress;
 
-    public float nextWaveSpawnTime;
-    public int minEnemiesLeftToProgress;
+    [Space(10)]
+
+    public List<WaveEnemySpawnProperties> enemiesToSpawn;
 }
 
 [System.Serializable]
 public class WaveEnemySpawnProperties
 {
+    public enum WaveSpawnMode { Random, CustomPosition, CustomRotation, CustomTransform }
+
     [SerializeField] private string name;
     public SpaceShooterData.Enemies enemyToSpawn;
 
-    public float spawnTime;
+    [Space(10)]
 
-    public bool useCustomSpawnPoint;
-    public Vector2 customSpawnPoint;
+    [Range(0f, 10f)] public float spawnTime;
+
+    [Space(10)]
+
+    public WaveSpawnMode spawnMode;
+    public Vector2 customSpawnPos = new Vector2(0f, SpaceShooterData.EnemyBoundLimitsY);
+    [Range(-180f, 180f)] public float customZRot;
+
 }
 
 public class WaveManager : MonoSingleton<WaveManager>
 {
-    [SerializeField] private List<Wave> waves;
-    [SerializeField] private List<IDamageable> enemiesOnScene = new List<IDamageable>();
-    [SerializeField] private float initWaveDelay;
+    [SerializeField] private float initializeNewDelay;
+    [SerializeField] private List<WaveDataSO> waveList;
+    private List<IDamageable> enemiesOnScene = new List<IDamageable>();
+    private Coroutine wavesCoroutine;
+    private Coroutine currentWaveCoroutine;
+
 
     public System.Action<int> OnWaveStart;
     public System.Action OnAllWavesCompleted;
 
+
     // Start is called before the first frame update
     void Start()
     {
-        StartCoroutine(WavesCoroutine());
+        wavesCoroutine = StartCoroutine(WavesCoroutine());
+    }
+
+    public void StopWaveCoroutine()
+    {
+        if (wavesCoroutine != null)
+        {
+            StopCoroutine(wavesCoroutine);
+            wavesCoroutine = null;
+        }
+        if (currentWaveCoroutine != null)
+        {
+            StopCoroutine(currentWaveCoroutine);
+            currentWaveCoroutine = null;
+        }
     }
 
     private IEnumerator WavesCoroutine()
     {
-        yield return new WaitForSeconds(initWaveDelay);
+        yield return new WaitForSeconds(initializeNewDelay);
 
-        for (int i = 0; i < waves.Count; i++)
+        for (int i = 0; i < waveList.Count; i++)
         {
             OnWaveStart?.Invoke(i);
-            yield return StartCoroutine(CurrentWaveCoroutine(i));
 
-            yield return new WaitUntil(() => enemiesOnScene.Count <= waves[i].minEnemiesLeftToProgress);
-            yield return new WaitForSeconds(waves[i].nextWaveSpawnTime);
+            currentWaveCoroutine = StartCoroutine(CurrentWaveCoroutine(i));
+            yield return new WaitUntil(() => currentWaveCoroutine == null); 
+
+            yield return new WaitUntil(() => enemiesOnScene.Count <= waveList[i].wave.minEnemiesLeftToProgress);
+            yield return new WaitForSeconds(waveList[i].wave.nextWaveSpawnTime);
         }
 
         OnAllWavesCompleted?.Invoke();
     }
     private IEnumerator CurrentWaveCoroutine(int currentWave)
     {
-        yield return new WaitForSeconds(initWaveDelay);
-        List<WaveEnemySpawnProperties> enemiesToSpawn = waves[currentWave].enemiesToSpawn;
+        yield return new WaitForSeconds(initializeNewDelay);
+        List<WaveEnemySpawnProperties> enemiesToSpawn = waveList[currentWave].wave.enemiesToSpawn;
 
         for (int i = 0; i < enemiesToSpawn.Count; i++)
         {
             GameObject enemySpawned = null;
 
-            if (enemiesToSpawn[i].useCustomSpawnPoint)
+            switch (enemiesToSpawn[i].spawnMode)
             {
-                enemySpawned = SpawnManager.Instance.SpawnEnemy(enemiesToSpawn[i].enemyToSpawn, enemiesToSpawn[i].customSpawnPoint);
-            }
-            else
-            {
-                enemySpawned = SpawnManager.Instance.SpawnEnemy(enemiesToSpawn[i].enemyToSpawn);
+                case WaveEnemySpawnProperties.WaveSpawnMode.Random:
+                    enemySpawned = SpawnManager.Instance.SpawnEnemy(enemiesToSpawn[i].enemyToSpawn);
+                    break;
+
+                case WaveEnemySpawnProperties.WaveSpawnMode.CustomPosition:
+                    enemySpawned = SpawnManager.Instance.SpawnEnemy(enemiesToSpawn[i].enemyToSpawn, enemiesToSpawn[i].customSpawnPos);
+                    break;
+
+                case WaveEnemySpawnProperties.WaveSpawnMode.CustomRotation:
+                    enemySpawned = SpawnManager.Instance.SpawnEnemy(enemiesToSpawn[i].enemyToSpawn, Quaternion.Euler(new Vector3(0f, 0f, enemiesToSpawn[i].customZRot)));
+                    break;
+
+                case WaveEnemySpawnProperties.WaveSpawnMode.CustomTransform:
+                    enemySpawned = SpawnManager.Instance.SpawnEnemy(enemiesToSpawn[i].enemyToSpawn, enemiesToSpawn[i].customSpawnPos, Quaternion.Euler(new Vector3(0f, 0f, enemiesToSpawn[i].customZRot)));
+                    break;
             }
 
             if (enemySpawned.TryGetComponent(out IDamageable entity))
@@ -80,6 +120,8 @@ public class WaveManager : MonoSingleton<WaveManager>
 
             yield return new WaitForSeconds(enemiesToSpawn[i].spawnTime);
         }
+
+        currentWaveCoroutine = null;
     }
 
     private void EnemyKilled(IDamageable enemyKilled)

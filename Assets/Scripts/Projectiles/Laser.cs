@@ -2,12 +2,7 @@
 
 public class Laser : LaserBase
 {
-    #region Variables
-    [Header("Laser Movement")]
-    [SerializeField] private bool worldAxis;
-    [SerializeField] private Vector2 moveDir;
-    #endregion
-
+    [SerializeField] private bool up;
 
     #region MonoBehaviour Methods
     // Update is called once per frame
@@ -31,10 +26,10 @@ public class Laser : LaserBase
     protected override void Move()
     {
         // Moves the laser
-        transform.Translate(moveDir.normalized * laserSpeed * Time.deltaTime, worldAxis ? Space.World : Space.Self);
+        transform.Translate((up ? Vector3.up : Vector3.down) * laserSpeed * Time.deltaTime);
 
         // If Laser is out of bounds
-        if (transform.position.y <= SpaceShooterData.LaserBoundLimitsY.x || transform.position.y >= SpaceShooterData.LaserBoundLimitsY.y)
+        if (Mathf.Abs(transform.position.y) >= SpaceShooterData.LaserBoundLimitsY || Mathf.Abs(transform.position.x) >= SpaceShooterData.WrapX)
         {
             gameObject.SetActive(false);
         }

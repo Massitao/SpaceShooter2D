@@ -145,7 +145,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 110816361}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.8250385, y: -0.74525917, z: -2.2788122}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 705507995}
@@ -646,7 +646,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 613886271}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -4.0074854, y: 0.579136, z: 0.78747356}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 110816362}
@@ -818,7 +818,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 705507993}
   m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
-  m_LocalPosition: {x: 0.8250385, y: 3.7452593, z: 2.2788122}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 110816362}
@@ -1199,8 +1199,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 990836317}
-  m_LocalRotation: {x: 1, y: 0, z: 0, w: 0}
-  m_LocalPosition: {x: 3.04, y: 13.1, z: 0}
+  m_LocalRotation: {x: 1, y: -0, z: -0, w: 0}
+  m_LocalPosition: {x: 0, y: 12, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 110816362}
@@ -6151,7 +6151,7 @@ GameObject:
   m_Layer: 0
   m_Name: GameManagers
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 8418204508859773708, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -6163,7 +6163,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1109613603}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.8250385, y: -0.74525917, z: -2.2788122}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 934128040}
@@ -6663,7 +6663,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1529115701}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -2.6744933, y: 3.9172606, z: -1.4024177}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1109613604}
@@ -6699,54 +6699,66 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   poolList:
-  - name: Player Laser
-    poolType: 3
-    prefabToInstantiate: {fileID: 2716096619162409450, guid: e6d94afe478a45148ab7019023453c26,
-      type: 3}
-    poolContainer: {fileID: 0}
-    populateAmount: 9
-  - name: Triple Shot
-    poolType: 4
-    prefabToInstantiate: {fileID: 8704510761869805030, guid: f21b464ef0bf5324dafc635dbb628cc9,
-      type: 3}
-    poolContainer: {fileID: 0}
-    populateAmount: 27
-  - name: Heat Seek
-    poolType: 5
-    prefabToInstantiate: {fileID: 3607081831160039948, guid: e34c9ca3d32530d4799f084abe9394d5,
-      type: 3}
-    poolContainer: {fileID: 0}
-    populateAmount: 15
-  - name: Enemy Laser
-    poolType: 6
-    prefabToInstantiate: {fileID: 8704510761869805030, guid: aa26557520e549e4fa095625b8974e23,
-      type: 3}
-    poolContainer: {fileID: 0}
-    populateAmount: 20
   - name: Rookie
     poolType: 0
     prefabToInstantiate: {fileID: 3499002942499517956, guid: a2e59650bdc33ec43876e77cd0e593a8,
       type: 3}
     poolContainer: {fileID: 0}
-    populateAmount: 1
-  - name: Asteroid
+    populateAmount: 8
+  - name: Bomber
     poolType: 1
+    prefabToInstantiate: {fileID: 8119408849583821007, guid: f14e09712d2596e4e8bb32c140cf2816,
+      type: 3}
+    poolContainer: {fileID: 0}
+    populateAmount: 8
+  - name: Asteroid
+    poolType: 2
     prefabToInstantiate: {fileID: 6680430017812846841, guid: b197040a4611be8449eef1fa37ba5fbd,
       type: 3}
     poolContainer: {fileID: 0}
-    populateAmount: 4
+    populateAmount: 3
   - name: Explosion
-    poolType: 2
+    poolType: 3
     prefabToInstantiate: {fileID: 3420214906567672560, guid: 9f7042ea233eef1428062a583c81ce52,
       type: 3}
     poolContainer: {fileID: 0}
-    populateAmount: 5
-  - name: Powerup
+    populateAmount: 8
+  - name: Player Laser
+    poolType: 4
+    prefabToInstantiate: {fileID: 2716096619162409450, guid: e6d94afe478a45148ab7019023453c26,
+      type: 3}
+    poolContainer: {fileID: 0}
+    populateAmount: 10
+  - name: Triple Shot
+    poolType: 5
+    prefabToInstantiate: {fileID: 8704510761869805030, guid: f21b464ef0bf5324dafc635dbb628cc9,
+      type: 3}
+    poolContainer: {fileID: 0}
+    populateAmount: 21
+  - name: Heat Seek Laser
+    poolType: 6
+    prefabToInstantiate: {fileID: 3607081831160039948, guid: e34c9ca3d32530d4799f084abe9394d5,
+      type: 3}
+    poolContainer: {fileID: 0}
+    populateAmount: 16
+  - name: Enemy Laser
     poolType: 7
+    prefabToInstantiate: {fileID: 8704510761869805030, guid: aa26557520e549e4fa095625b8974e23,
+      type: 3}
+    poolContainer: {fileID: 0}
+    populateAmount: 16
+  - name: Bomb
+    poolType: 8
+    prefabToInstantiate: {fileID: 5732068508462760270, guid: c00c55a124cca9a48a5ba3b9b5a11c4b,
+      type: 3}
+    poolContainer: {fileID: 0}
+    populateAmount: 4
+  - name: Powerup
+    poolType: 9
     prefabToInstantiate: {fileID: 5210187608902166464, guid: ffacbf85ae23d7740b9ee6e9a09301a6,
       type: 3}
     poolContainer: {fileID: 0}
-    populateAmount: 2
+    populateAmount: 3
 --- !u!4 &1546517250
 Transform:
   m_ObjectHideFlags: 0
@@ -6755,7 +6767,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1546517248}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.8250385, y: 0.74525917, z: 2.2788122}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1109613604}
@@ -7044,7 +7056,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1744028639}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -2}
   m_LocalScale: {x: 2, y: 2, z: 1}
   m_Children: []
   m_Father: {fileID: 110816362}
@@ -7893,17 +7905,17 @@ PrefabInstance:
     - target: {fileID: 748414047065262236, guid: 68eb5464579ee934e883c5164c7f1339,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -2.6744933
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 748414047065262236, guid: 68eb5464579ee934e883c5164c7f1339,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3.9172606
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 748414047065262236, guid: 68eb5464579ee934e883c5164c7f1339,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1.4024177
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 748414047065262236, guid: 68eb5464579ee934e883c5164c7f1339,
         type: 3}
@@ -7940,6 +7952,59 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7219805854670349758, guid: 68eb5464579ee934e883c5164c7f1339,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7219805854670349758, guid: 68eb5464579ee934e883c5164c7f1339,
+        type: 3}
+      propertyPath: waves.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7219805854670349758, guid: 68eb5464579ee934e883c5164c7f1339,
+        type: 3}
+      propertyPath: waveList.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7219805854670349758, guid: 68eb5464579ee934e883c5164c7f1339,
+        type: 3}
+      propertyPath: waveList.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: 70c41f1f4ab853c4187d4ae2184bcb20,
+        type: 2}
+    - target: {fileID: 7219805854670349758, guid: 68eb5464579ee934e883c5164c7f1339,
+        type: 3}
+      propertyPath: waveList.Array.data[1]
+      value: 
+      objectReference: {fileID: 11400000, guid: b804080ecfebcbb4bb8d0cbfa8c821d2,
+        type: 2}
+    - target: {fileID: 7219805854670349758, guid: 68eb5464579ee934e883c5164c7f1339,
+        type: 3}
+      propertyPath: waveList.Array.data[2]
+      value: 
+      objectReference: {fileID: 11400000, guid: df3d8c00b8482964a94bf32103449876,
+        type: 2}
+    - target: {fileID: 7219805854670349758, guid: 68eb5464579ee934e883c5164c7f1339,
+        type: 3}
+      propertyPath: waves.Array.data[0].enemiesToSpawn.Array.size
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 7219805854670349758, guid: 68eb5464579ee934e883c5164c7f1339,
+        type: 3}
+      propertyPath: waves.Array.data[0].enemiesToSpawn.Array.data[0].name
+      value: R1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7219805854670349758, guid: 68eb5464579ee934e883c5164c7f1339,
+        type: 3}
+      propertyPath: waves.Array.data[0].enemiesToSpawn.Array.data[1].name
+      value: R2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7219805854670349758, guid: 68eb5464579ee934e883c5164c7f1339,
+        type: 3}
+      propertyPath: waves.Array.data[0].enemiesToSpawn.Array.data[0].spawnTime
+      value: 0.2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 68eb5464579ee934e883c5164c7f1339, type: 3}
 --- !u!1001 &3033739983086129229
@@ -7962,17 +8027,17 @@ PrefabInstance:
     - target: {fileID: 3033739983221863646, guid: 459478f7e6d63874d9efdad3d094644e,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -2.6744933
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3033739983221863646, guid: 459478f7e6d63874d9efdad3d094644e,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3.9172606
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3033739983221863646, guid: 459478f7e6d63874d9efdad3d094644e,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1.4024177
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3033739983221863646, guid: 459478f7e6d63874d9efdad3d094644e,
         type: 3}
@@ -8031,17 +8096,17 @@ PrefabInstance:
     - target: {fileID: 3960060608089185715, guid: 7887f4c4190707f41b4ee154e8885fc9,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -4.832524
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3960060608089185715, guid: 7887f4c4190707f41b4ee154e8885fc9,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.16612315
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3960060608089185715, guid: 7887f4c4190707f41b4ee154e8885fc9,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1.4913386
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3960060608089185715, guid: 7887f4c4190707f41b4ee154e8885fc9,
         type: 3}
@@ -8100,17 +8165,17 @@ PrefabInstance:
     - target: {fileID: 5607154793195013399, guid: eda1384090ca7f84eb47f103777a40cf,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -4.832524
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5607154793195013399, guid: eda1384090ca7f84eb47f103777a40cf,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.16612315
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5607154793195013399, guid: eda1384090ca7f84eb47f103777a40cf,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1.4913386
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5607154793195013399, guid: eda1384090ca7f84eb47f103777a40cf,
         type: 3}
@@ -8160,16 +8225,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Ship
-      objectReference: {fileID: 0}
-    - target: {fileID: 7222636168036227811, guid: 43b64af69b38583479150f4b51a44f7d,
-        type: 3}
-      propertyPath: virusMoveChangeAmount
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7222636168036227811, guid: 43b64af69b38583479150f4b51a44f7d,
-        type: 3}
-      propertyPath: virusMoveChangeUpdateTime
-      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7222636168036227813, guid: 43b64af69b38583479150f4b51a44f7d,
         type: 3}

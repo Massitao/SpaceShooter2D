@@ -22,7 +22,7 @@ public class ObjectPool : MonoSingleton<ObjectPool>
 {
     [SerializeField] private List<Pool> poolList = new List<Pool>();
 
-    public enum PoolType { Rookie, Asteroid, Explosion, PlayerLaser, TripleShotLaser, HeatSeekLaser, EnemyLaser, Powerup }
+    public enum PoolType { Rookie, Bomber, Asteroid, Explosion, PlayerLaser, TripleShotLaser, HeatSeekLaser, EnemyLaser, Bomb, Powerup }
     private Dictionary<PoolType, Pool> poolDictionary = new Dictionary<PoolType, Pool>();
 
 
@@ -43,7 +43,7 @@ public class ObjectPool : MonoSingleton<ObjectPool>
 
                 for (int j = 0; j < poolList[i].populateAmount; j++)
                 {
-                    GenerateNewObject(poolList[i].poolType, false);
+                    GenerateNewObject(poolList[i].poolType);
                 }
             }
             else
@@ -54,7 +54,7 @@ public class ObjectPool : MonoSingleton<ObjectPool>
         }
     }
 
-    private GameObject GenerateNewObject(PoolType poolType, bool instantUse)
+    private void GenerateNewObject(PoolType poolType)
     {
         if (poolDictionary.ContainsKey(poolType))
         {
@@ -65,22 +65,15 @@ public class ObjectPool : MonoSingleton<ObjectPool>
             newObject.AddComponent<ObjectPoolTracker>().SetObjectType(poolType);
 
             // Queues the object to its respective pool (Tracker calls ReturnPooledObject())
-            // If instantUse is true, it won't queue the object and it will directly return the new object
-            if (!instantUse)
-            {
-                newObject.SetActive(false);
-            }
-
-            return newObject;
+            newObject.SetActive(false);
         }
         else
         {
             Debug.LogWarning($"Requested Object from a non existing pool! {poolType.ToString()}");
-            return null;
         }
     }
 
-    public GameObject GetPooledObject(PoolType poolType)
+    public GameObject GetPooledObject(PoolType poolType, Vector3 pos, Quaternion rot)
     {
         if (poolDictionary.ContainsKey(poolType))
         {
@@ -88,6 +81,9 @@ public class ObjectPool : MonoSingleton<ObjectPool>
             if (poolDictionary[poolType].pooledGameObjects.Count != 0)
             {
                 GameObject pooledObject = poolDictionary[poolType].pooledGameObjects.Dequeue();
+                pooledObject.transform.position = pos;
+                pooledObject.transform.rotation = rot;
+
                 pooledObject.SetActive(true);
                 return pooledObject;
             }
@@ -95,7 +91,14 @@ public class ObjectPool : MonoSingleton<ObjectPool>
             // Creates a new object and instantly returns it
             else
             {
-                return GenerateNewObject(poolType, true);
+                GenerateNewObject(poolType);
+
+                GameObject pooledObject = poolDictionary[poolType].pooledGameObjects.Dequeue();
+                pooledObject.transform.position = pos;
+                pooledObject.transform.rotation = rot;
+
+                pooledObject.SetActive(true);
+                return pooledObject;
             }
         }
         else

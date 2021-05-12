@@ -1,0 +1,138 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 339952c94fb25814083bc1876a50c307, type: 3}
+  m_Name: Wave 3
+  m_EditorClassIdentifier: 
+  wave:
+    nextWaveSpawnTime: 3
+    minEnemiesLeftToProgress: 3
+    enemiesToSpawn:
+    - name: R1
+      enemyToSpawn: 0
+      spawnTime: 2
+      spawnMode: 0
+      customSpawnPos: {x: 0, y: 0}
+      customZRot: 0
+    - name: R2
+      enemyToSpawn: 0
+      spawnTime: 2
+      spawnMode: 0
+      customSpawnPos: {x: 0, y: 0}
+      customZRot: 0
+    - name: R3
+      enemyToSpawn: 0
+      spawnTime: 2
+      spawnMode: 0
+      customSpawnPos: {x: 0, y: 0}
+      customZRot: 0
+    - name: R4
+      enemyToSpawn: 0
+      spawnTime: 2
+      spawnMode: 0
+      customSpawnPos: {x: 0, y: 0}
+      customZRot: 0
+    - name: R5
+      enemyToSpawn: 0
+      spawnTime: 2
+      spawnMode: 0
+      customSpawnPos: {x: 0, y: 0}
+      customZRot: 0
+    - name: R6
+      enemyToSpawn: 0
+      spawnTime: 2
+      spawnMode: 0
+      customSpawnPos: {x: 0, y: 0}
+      customZRot: 0
+    - name: R7
+      enemyToSpawn: 0
+      spawnTime: 2
+      spawnMode: 0
+      customSpawnPos: {x: 0, y: 0}
+      customZRot: 0
+    - name: R8
+      enemyToSpawn: 0
+      spawnTime: 2
+      spawnMode: 0
+      customSpawnPos: {x: 0, y: 0}
+      customZRot: 0
+    - name: R9
+      enemyToSpawn: 0
+      spawnTime: 2
+      spawnMode: 0
+      customSpawnPos: {x: 0, y: 0}
+      customZRot: 0
+    - name: R10
+      enemyToSpawn: 0
+      spawnTime: 5
+      spawnMode: 0
+      customSpawnPos: {x: 0, y: 0}
+      customZRot: 0
+    - name: B1
+      enemyToSpawn: 1
+      spawnTime: 3
+      spawnMode: 3
+      customSpawnPos: {x: 0, y: 12}
+      customZRot: 0
+    - name: R11
+      enemyToSpawn: 0
+      spawnTime: 1
+      spawnMode: 0
+      customSpawnPos: {x: 0, y: 0}
+      customZRot: 0
+    - name: R12
+      enemyToSpawn: 0
+      spawnTime: 1
+      spawnMode: 0
+      customSpawnPos: {x: 0, y: 0}
+      customZRot: 0
+    - name: R13
+      enemyToSpawn: 0
+      spawnTime: 1
+      spawnMode: 0
+      customSpawnPos: {x: 0, y: 0}
+      customZRot: 0
+    - name: R14
+      enemyToSpawn: 0
+      spawnTime: 1
+      spawnMode: 0
+      customSpawnPos: {x: 0, y: 0}
+      customZRot: 0
+    - name: R15
+      enemyToSpawn: 0
+      spawnTime: 1
+      spawnMode: 0
+      customSpawnPos: {x: 0, y: 0}
+      customZRot: 0
+    - name: R16
+      enemyToSpawn: 0
+      spawnTime: 1
+      spawnMode: 0
+      customSpawnPos: {x: 0, y: 0}
+      customZRot: 0
+    - name: R17
+      enemyToSpawn: 0
+      spawnTime: 6
+      spawnMode: 0
+      customSpawnPos: {x: 0, y: 0}
+      customZRot: 0
+    - name: B2
+      enemyToSpawn: 1
+      spawnTime: 0
+      spawnMode: 3
+      customSpawnPos: {x: -10, y: 12}
+      customZRot: 0
+    - name: B3
+      enemyToSpawn: 1
+      spawnTime: 0
+      spawnMode: 3
+      customSpawnPos: {x: 10, y: 12}
+      customZRot: 0

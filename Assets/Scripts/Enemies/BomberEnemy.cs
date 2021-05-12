@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class RookieEnemy : EnemyShooterBase
+public class BomberEnemy : EnemyShooterBase
 {
     #region Variables
     #region Components
@@ -20,14 +20,18 @@ public class RookieEnemy : EnemyShooterBase
     [Header("Enemy Move")]
     [SerializeField] private float enemySpeed = 4f;
     [SerializeField] [Range(0f, 1f)] private float enemyExplosionSpeedReduction = 0.5f;
+    [SerializeField] private float sinFrequency = 4f;
+    [SerializeField] private float sinAmplitude = 4f;
+
+    Vector2 dirToMove = Vector2.zero;
+
 
     [Header("Enemy Shoot")]
-    [SerializeField] private GameObject laserPrefab;
-    [SerializeField] private Transform laserLeftSpawnOffset;
-    [SerializeField] private Transform laserRightSpawnOffset;
-    [SerializeField] private Vector2 fireRate = new Vector2(2f, 4f);
+    [SerializeField] private GameObject bombPrefab;
+    [SerializeField] private Transform bombSpawn;
 
-    private float fireRateTimer = 0f;
+    private float bombFirePos;
+    private bool bombFiredInScreen;
 
 
     [Header("Enemy On Collision Damage")]
@@ -46,6 +50,9 @@ public class RookieEnemy : EnemyShooterBase
         base.OnEnable();
 
         enemyCol.enabled = true;
+        bombFiredInScreen = false;
+
+        bombFirePos = Random.Range(-SpaceShooterData.EnemyBoundLimitsY * 0.25f, SpaceShooterData.EnemyBoundLimitsY * 0.8f);
     }
 
     protected void Start()
@@ -62,12 +69,8 @@ public class RookieEnemy : EnemyShooterBase
     #endregion
 
     #region Custom Methods
-    // I use this method to give a bit of anticipation to the player. The player should see the Enemy ship firing the lasers inside the screen.
-    protected override void EnemyVisible()
-    {
-        // Reset fireRateTimer if the Enemy has entered again the screen
-        fireRateTimer = Time.time + Random.Range(fireRate.x, fireRate.y) * Random.Range(0f, .4f);
-    }
+    // Visible. Has no functionality atm
+    protected override void EnemyVisible() { }
 
     // No longer visible. Has no functionality atm
     protected override void EnemyInvisible() { }
@@ -89,8 +92,19 @@ public class RookieEnemy : EnemyShooterBase
 
     protected override void Move()
     {
+        if (EntityHealth > 0)
+        {
+            dirToMove = (Vector2.right + Vector2.down).normalized;
+            dirToMove.x *= Mathf.Sin(Time.time * sinFrequency) * sinAmplitude;
+            dirToMove.y *= (enemySpeed * (enemyCol.enabled ? 1f : enemyExplosionSpeedReduction));
+        }
+        else
+        {
+            dirToMove = dirToMove.normalized * enemySpeed * enemyExplosionSpeedReduction;
+        }
+
         // Move downwards
-        transform.Translate(Vector3.down * (enemySpeed * (enemyCol.enabled ? 1f : enemyExplosionSpeedReduction)) * Time.deltaTime);
+        transform.Translate(dirToMove * Time.deltaTime);
 
         // If the enemy is out of bounds, teleport it above the screen in a new X position
         if (Mathf.Abs(transform.position.y) > SpaceShooterData.EnemyBoundLimitsY || Mathf.Abs(transform.position.x) > SpaceShooterData.SpawnX)
@@ -98,11 +112,8 @@ public class RookieEnemy : EnemyShooterBase
             if (EntityHealth > 0)
             {
                 transform.position = new Vector3(Random.Range(-SpaceShooterData.SpawnX, SpaceShooterData.SpawnX), SpaceShooterData.EnemyBoundLimitsY, transform.position.z);
-
-                if (transform.rotation.eulerAngles.z != 0f)
-                {
-                    transform.rotation = Quaternion.Euler(0f, 0f, Random.Range(0f, (transform.position.x <= 0f) ? SpaceShooterData.MaxEnemyRotation : -SpaceShooterData.MaxEnemyRotation));
-                }
+                bombFirePos = Random.Range(-SpaceShooterData.EnemyBoundLimitsY * 0.25f, SpaceShooterData.EnemyBoundLimitsY * 0.8f);
+                bombFiredInScreen = false;
             }
             else
             {
@@ -119,14 +130,14 @@ public class RookieEnemy : EnemyShooterBase
             if (GameManager.Instance.IsGameOver()) return;
         }
 
-        // If the Enemy is visible, and has health...
-        if (isVisible && EntityHealth > 0f)
+        // If the Enemy hasn't dropped a bomb, and has health...
+        if (!bombFiredInScreen && EntityHealth > 0f)
         {
             // If Time.time is higher than the Fire Rate Timer
-            if (Time.time >= fireRateTimer)
+            if (Mathf.Abs(bombFirePos - transform.position.y) <= 0.1f)
             {
-                // Update timer
-                fireRateTimer = Time.time + Random.Range(fireRate.x, fireRate.y);
+                // Block bombing
+                bombFiredInScreen = true;
 
                 // Play Shoot soundclip
                 AudioManager.Instance?.PlayOneShotClip(shootClip);
@@ -134,13 +145,12 @@ public class RookieEnemy : EnemyShooterBase
                 // Instantiate lasers from pool
                 if (ObjectPool.Instance != null)
                 {
-                    GameObject laser = null;
-                    laser = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.EnemyLaser, laserLeftSpawnOffset.position, transform.rotation);
-                    laser = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.EnemyLaser, laserRightSpawnOffset.position, transform.rotation);
+                    GameObject bomb = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.Bomb, bombSpawn.position, transform.rotation);
                 }
             }
         }
     }
+
 
 
     // IDamageable - Behaviour to run when the Enemy has no health left

@@ -70,7 +70,7 @@ public class HeatMissile : LaserBase
         }
 
         // If Laser is out of bounds
-        if (transform.position.y <= SpaceShooterData.LaserBoundLimitsY.x || transform.position.y >= SpaceShooterData.LaserBoundLimitsY.y)
+        if (Mathf.Abs(transform.position.y) >= SpaceShooterData.LaserBoundLimitsY)
         {
             gameObject.SetActive(false);
         }

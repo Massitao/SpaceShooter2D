@@ -161,7 +161,7 @@ public class LaserBeam : MonoBehaviour
         BeamGrowStart();
 
         // Grow Laser Beam, both in X and Y Axis
-        while (beamSprite.size.y < SpaceShooterData.LaserBoundLimitsY.y - transform.position.y && !Mathf.Approximately(beamSprite.size.y, SpaceShooterData.LaserBoundLimitsY.y - transform.position.y))
+        while (beamSprite.size.y < SpaceShooterData.LaserBoundLimitsY - transform.position.y && !Mathf.Approximately(beamSprite.size.y, SpaceShooterData.LaserBoundLimitsY - transform.position.y))
         {
             BeamGrow();
             yield return null;
@@ -261,12 +261,12 @@ public class LaserBeam : MonoBehaviour
     }
     private void BeamGrow()
     {
-        SetBeamSize(beamSprite.size.x + beamGrowXSpeed * Time.deltaTime, beamSprite.size.y + beamGrowYSpeed * Time.deltaTime, beamMaxSizeX, SpaceShooterData.LaserBoundLimitsY.y - transform.position.y);
+        SetBeamSize(beamSprite.size.x + beamGrowXSpeed * Time.deltaTime, beamSprite.size.y + beamGrowYSpeed * Time.deltaTime, beamMaxSizeX, SpaceShooterData.LaserBoundLimitsY - transform.position.y);
         SetFakeLightAlpha(beamLightPingPong.Evaluate(Mathf.PingPong(Time.time * beamPingPongSpeed, 1f)));
     }
     private void BeamGrowIdle()
     {
-        SetBeamSize(beamMaxSizeX, SpaceShooterData.LaserBoundLimitsY.y - transform.position.y, beamMaxSizeX, SpaceShooterData.LaserBoundLimitsY.y - transform.position.y);
+        SetBeamSize(beamMaxSizeX, SpaceShooterData.LaserBoundLimitsY - transform.position.y, beamMaxSizeX, SpaceShooterData.LaserBoundLimitsY - transform.position.y);
         SetFakeLightAlpha(beamLightPingPong.Evaluate(Mathf.PingPong(Time.time * beamPingPongSpeed, 1f)));
         SetTimer(Mathf.Clamp(beamTimer + Time.deltaTime, 0f, beamDuration));
     }

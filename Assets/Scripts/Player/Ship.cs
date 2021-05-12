@@ -228,7 +228,7 @@ public class Ship : MonoBehaviour, IHealable
         moveInput = input.ReadValue<Vector2>();
 
         // Update Ship Move Animations
-        shipAnim.SetFloat(shipAnim_InputHash, moveInput.x);
+        shipAnim.SetFloat(shipAnim_InputHash, MoveDirection().x);
     }
     public void UpdateShootInput(InputAction.CallbackContext input)
     {
@@ -404,39 +404,35 @@ public class Ship : MonoBehaviour, IHealable
 
     private void NormalShoot()
     {
-        GameObject laser = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.PlayerLaser);
-        laser.transform.position = transform.position + (Vector3)laserSpawnOffset;
-        laser.transform.rotation = Quaternion.identity;
+        GameObject laser = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.PlayerLaser, transform.position + (Vector3)laserSpawnOffset, Quaternion.identity);
     }
     private void TripleShoot()
     {
         GameObject laser = null;
+        Vector3 pos = Vector3.zero;
 
         for (int i = 0; i < 3; i++)
         {
-            laser = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.TripleShotLaser);
-            laser.transform.rotation = Quaternion.identity;
-
             // Sets transform position
             switch (i)
             {
                 case 0:
-                    laser.transform.position = transform.position + (Vector3)leftLaserSpawnOffset;
+                    pos = transform.position + (Vector3)leftLaserSpawnOffset;
                     break;
                 case 1:
-                    laser.transform.position = transform.position + (Vector3)laserSpawnOffset;
+                    pos = transform.position + (Vector3)laserSpawnOffset;
                     break;
                 case 2:
-                    laser.transform.position = transform.position + (Vector3)rightLaserSpawnOffset;
+                    pos = transform.position + (Vector3)rightLaserSpawnOffset;
                     break;
             }
+
+            laser = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.TripleShotLaser, pos, Quaternion.identity);
         }
     }
     private void HeatSeekShoot()
     {
-        GameObject laser = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.HeatSeekLaser);
-        laser.transform.position = transform.position + (Vector3)laserSpawnOffset;
-        laser.transform.rotation = Quaternion.identity;
+        GameObject laser = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.HeatSeekLaser, transform.position + (Vector3)laserSpawnOffset, Quaternion.identity);
     }
 
     private void ChooseFireRate(float newFireRate)
@@ -543,10 +539,7 @@ public class Ship : MonoBehaviour, IHealable
         OnEntityKilled?.Invoke(this);
 
         // Instantiate Explosion and Destroy this GameObject
-        GameObject explosion = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.Explosion);
-        explosion.transform.position = transform.position;
-        explosion.transform.rotation = Quaternion.identity;
-
+        GameObject explosion = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.Explosion, transform.position, Quaternion.identity);
         gameObject.SetActive(false);
     }
 
@@ -744,6 +737,7 @@ public class Ship : MonoBehaviour, IHealable
 
             case PowerUp.Type.Virus:
                 if (virusCoroutine != null) StopPowerUp(PowerUp.Type.Virus);
+                shipAnim.SetFloat(shipAnim_InputHash, MoveDirection().x);
                 virusCoroutine = StartCoroutine(VirusCoroutine());
                 break;
         }

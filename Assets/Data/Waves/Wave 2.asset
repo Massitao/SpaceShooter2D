@@ -1,0 +1,78 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 339952c94fb25814083bc1876a50c307, type: 3}
+  m_Name: Wave 2
+  m_EditorClassIdentifier: 
+  wave:
+    nextWaveSpawnTime: 3
+    minEnemiesLeftToProgress: 2
+    enemiesToSpawn:
+    - name: R1
+      enemyToSpawn: 0
+      spawnTime: 1
+      spawnMode: 3
+      customSpawnPos: {x: 0, y: 12}
+      customZRot: 0
+    - name: R2.1
+      enemyToSpawn: 0
+      spawnTime: 0
+      spawnMode: 3
+      customSpawnPos: {x: -5, y: 12}
+      customZRot: 0
+    - name: R2.2
+      enemyToSpawn: 0
+      spawnTime: 1
+      spawnMode: 3
+      customSpawnPos: {x: 5, y: 12}
+      customZRot: 0
+    - name: R3.1
+      enemyToSpawn: 0
+      spawnTime: 0
+      spawnMode: 3
+      customSpawnPos: {x: -10, y: 12}
+      customZRot: 0
+    - name: R3.2
+      enemyToSpawn: 0
+      spawnTime: 2
+      spawnMode: 3
+      customSpawnPos: {x: 10, y: 12}
+      customZRot: 0
+    - name: R4 Left
+      enemyToSpawn: 0
+      spawnTime: 0
+      spawnMode: 3
+      customSpawnPos: {x: -20, y: 3}
+      customZRot: 90
+    - name: R4 Right
+      enemyToSpawn: 0
+      spawnTime: 3
+      spawnMode: 3
+      customSpawnPos: {x: 20, y: -3}
+      customZRot: -90
+    - name: R5
+      enemyToSpawn: 0
+      spawnTime: 0
+      spawnMode: 0
+      customSpawnPos: {x: 0, y: 12}
+      customZRot: 0
+    - name: R6
+      enemyToSpawn: 0
+      spawnTime: 0
+      spawnMode: 0
+      customSpawnPos: {x: 0, y: 12}
+      customZRot: 0
+    - name: R7
+      enemyToSpawn: 0
+      spawnTime: 0
+      spawnMode: 0
+      customSpawnPos: {x: 0, y: 12}
+      customZRot: 0

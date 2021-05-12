@@ -42,7 +42,7 @@ public class PowerUp : MonoBehaviour
         transform.Translate(Vector3.down * speed * Time.deltaTime);
 
         // Destroy if it reaches the Despawn Point
-        if (transform.position.y <= SpaceShooterData.EnemyBoundLimitsY.x)
+        if (transform.position.y <= -SpaceShooterData.EnemyBoundLimitsY)
         {
             gameObject.SetActive(false);
         }

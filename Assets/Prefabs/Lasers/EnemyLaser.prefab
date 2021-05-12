@@ -89,13 +89,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6883474428334785022, guid: e6d94afe478a45148ab7019023453c26,
         type: 3}
+      propertyPath: up
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6883474428334785022, guid: e6d94afe478a45148ab7019023453c26,
+        type: 3}
       propertyPath: moveDir.y
       value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 6883474428334785022, guid: e6d94afe478a45148ab7019023453c26,
         type: 3}
       propertyPath: worldAxis
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e6d94afe478a45148ab7019023453c26, type: 3}
