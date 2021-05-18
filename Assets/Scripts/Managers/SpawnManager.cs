@@ -52,6 +52,10 @@ public class SpawnManager : MonoSingleton<SpawnManager>
                 newEnemy = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.Bomber, randomSpawn, randomRot);
                 break;
 
+            case SpaceShooterData.Enemies.Toxic:
+                newEnemy = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.Toxic, randomSpawn, randomRot);
+                break;
+
             case SpaceShooterData.Enemies.Asteroid:
                 newEnemy = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.Asteroid, randomSpawn, randomRot);
                 break;
@@ -72,6 +76,10 @@ public class SpawnManager : MonoSingleton<SpawnManager>
 
             case SpaceShooterData.Enemies.Bomber:
                 newEnemy = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.Bomber, pos, randomRot);
+                break;
+
+            case SpaceShooterData.Enemies.Toxic:
+                newEnemy = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.Toxic, pos, randomRot);
                 break;
 
             case SpaceShooterData.Enemies.Asteroid:
@@ -96,6 +104,10 @@ public class SpawnManager : MonoSingleton<SpawnManager>
                 newEnemy = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.Bomber, randomSpawn, rot);
                 break;
 
+            case SpaceShooterData.Enemies.Toxic:
+                newEnemy = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.Toxic, randomSpawn, rot);
+                break;
+
             case SpaceShooterData.Enemies.Asteroid:
                 newEnemy = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.Asteroid, randomSpawn, rot);
                 break;
@@ -115,6 +127,10 @@ public class SpawnManager : MonoSingleton<SpawnManager>
 
             case SpaceShooterData.Enemies.Bomber:
                 newEnemy = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.Bomber, pos, rot);
+                break;
+
+            case SpaceShooterData.Enemies.Toxic:
+                newEnemy = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.Toxic, pos, rot);
                 break;
 
             case SpaceShooterData.Enemies.Asteroid:

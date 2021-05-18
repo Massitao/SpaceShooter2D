@@ -22,16 +22,11 @@ public class RookieEnemy : EnemyShooterBase
     [SerializeField] [Range(0f, 1f)] private float enemyExplosionSpeedReduction = 0.5f;
 
     [Header("Enemy Shoot")]
-    [SerializeField] private GameObject laserPrefab;
     [SerializeField] private Transform laserLeftSpawnOffset;
     [SerializeField] private Transform laserRightSpawnOffset;
     [SerializeField] private Vector2 fireRate = new Vector2(2f, 4f);
 
     private float fireRateTimer = 0f;
-
-
-    [Header("Enemy On Collision Damage")]
-    [SerializeField] protected int collisionDamage = 1;
 
 
     [Header("Audio")]

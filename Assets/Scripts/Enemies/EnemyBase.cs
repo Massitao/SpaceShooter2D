@@ -45,6 +45,10 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
 
     [Header("Score")]
     [SerializeField] protected int scoreToGive = 0;
+
+
+    [Header("Enemy On Collision Damage")]
+    [SerializeField] protected int collisionDamage = 1;
     #endregion
 
     #region Events

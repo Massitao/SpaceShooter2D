@@ -9,6 +9,6 @@
     public static float MaxEnemyRotation = 30f;
 
 
-    public enum Enemies { Rookie, Bomber, Asteroid }
+    public enum Enemies { Rookie, Bomber, Toxic, Asteroid }
     public enum Levels { MainMenuScene, GameScene }
 }

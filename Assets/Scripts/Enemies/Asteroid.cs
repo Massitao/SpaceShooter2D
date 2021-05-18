@@ -9,10 +9,6 @@ public class Asteroid : EnemyBase
     private bool inverseSpin;
 
 
-    [Header("Asteroid On Collision Damage")]
-    [SerializeField] private int collisionDamage = 3;
-
-
     [Header("Asteroid Explosion")]
     [SerializeField] private float asteroidDestroyDelay;
     #endregion

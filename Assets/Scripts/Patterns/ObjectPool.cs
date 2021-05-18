@@ -22,7 +22,7 @@ public class ObjectPool : MonoSingleton<ObjectPool>
 {
     [SerializeField] private List<Pool> poolList = new List<Pool>();
 
-    public enum PoolType { Rookie, Bomber, Asteroid, Explosion, PlayerLaser, TripleShotLaser, HeatSeekLaser, EnemyLaser, Bomb, Powerup }
+    public enum PoolType { Rookie, Bomber, Toxic, Asteroid, Explosion, ToxicSmoke, PlayerLaser, TripleShotLaser, HeatSeekLaser, EnemyLaser, Bomb, Powerup }
     private Dictionary<PoolType, Pool> poolDictionary = new Dictionary<PoolType, Pool>();
 
 

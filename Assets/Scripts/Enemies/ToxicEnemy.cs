@@ -1,36 +1,45 @@
 ﻿using UnityEngine;
 
-public class BomberEnemy : EnemyShooterBase
+public class ToxicEnemy : EnemyShooterBase
 {
     #region Variables
     #region Components
     [Header("Components")]
     [SerializeField] private Animator enemyAnim;
+    [SerializeField] private Animator toxicShieldAnim;
     [SerializeField] private Collider2D enemyCol;
     [SerializeField] private AudioSource enemyAudioSource;
     #endregion
 
     #region Animator
     [Header("Animator References")]
+    // Ship Animations
     [SerializeField] private string enemyAnim_DeathTrigger;
     private int enemyAnim_DeathTriggerHash;
+
+    // Shield Animations
+    [SerializeField] private string shieldAnim_HealthInt;
+    private int shieldAnim_HealthIntHash;
     #endregion
 
 
     [Header("Enemy Move")]
-    [SerializeField] private float enemySpeed = 4f;
+    [SerializeField] private float enemySpeed = 6f;
+    [SerializeField] private float shieldedSpeed = 4f;
     [SerializeField] [Range(0f, 1f)] private float enemyExplosionSpeedReduction = 0.5f;
-    [SerializeField] private float sinFrequency = 4f;
-    [SerializeField] private float sinAmplitude = 4f;
-
-    Vector2 dirToMove = Vector2.zero;
-
 
     [Header("Enemy Shoot")]
-    [SerializeField] private Transform bombSpawn;
+    [SerializeField] private Transform laserLeftSpawnOffset;
+    [SerializeField] private Transform laserRightSpawnOffset;
+    [SerializeField] private Vector2 fireRate = new Vector2(2f, 4f);
 
-    private float bombFirePos;
-    private bool bombFiredInScreen;
+    private float fireRateTimer = 0f;
+
+
+    [Header("Toxic Shield")]
+    private int shieldHealth = 0;
+    private int shieldMaxHealth = 1;
+    private bool shieldActive;
 
 
     [Header("Audio")]
@@ -45,14 +54,19 @@ public class BomberEnemy : EnemyShooterBase
         base.OnEnable();
 
         enemyCol.enabled = true;
-        bombFiredInScreen = false;
+    }
 
-        bombFirePos = Random.Range(-SpaceShooterData.EnemyBoundLimitsY * 0.25f, SpaceShooterData.EnemyBoundLimitsY * 0.8f);
+    private void OnDisable()
+    {
+        ShieldRecharge();
     }
 
     protected void Start()
     {
         enemyAnim_DeathTriggerHash = Animator.StringToHash(enemyAnim_DeathTrigger);
+        shieldAnim_HealthIntHash = Animator.StringToHash(shieldAnim_HealthInt);
+
+        ShieldRecharge();
     }
 
     // Update is called once per frame
@@ -64,8 +78,12 @@ public class BomberEnemy : EnemyShooterBase
     #endregion
 
     #region Custom Methods
-    // Visible. Has no functionality atm
-    protected override void EnemyVisible() { }
+    // I use this method to give a bit of anticipation to the player. The player should see the Enemy ship firing the lasers inside the screen.
+    protected override void EnemyVisible()
+    {
+        // Reset fireRateTimer if the Enemy has entered again the screen
+        fireRateTimer = Time.time + Random.Range(fireRate.x, fireRate.y) * Random.Range(0f, .4f);
+    }
 
     // No longer visible. Has no functionality atm
     protected override void EnemyInvisible() { }
@@ -87,19 +105,10 @@ public class BomberEnemy : EnemyShooterBase
 
     protected override void Move()
     {
-        if (EntityHealth > 0)
-        {
-            dirToMove = (Vector2.right + Vector2.down).normalized;
-            dirToMove.x *= Mathf.Sin(Time.time * sinFrequency) * sinAmplitude;
-            dirToMove.y *= (enemySpeed * (enemyCol.enabled ? 1f : enemyExplosionSpeedReduction));
-        }
-        else
-        {
-            dirToMove = dirToMove.normalized * enemySpeed * enemyExplosionSpeedReduction;
-        }
+        float selectedSpeed = (shieldActive) ? shieldedSpeed : enemySpeed;
 
         // Move downwards
-        transform.Translate(dirToMove * Time.deltaTime);
+        transform.Translate(Vector3.down * (selectedSpeed * (enemyCol.enabled ? 1f : enemyExplosionSpeedReduction)) * Time.deltaTime);
 
         // If the enemy is out of bounds, teleport it above the screen in a new X position
         if (Mathf.Abs(transform.position.y) > SpaceShooterData.EnemyBoundLimitsY || Mathf.Abs(transform.position.x) > SpaceShooterData.SpawnX)
@@ -107,8 +116,11 @@ public class BomberEnemy : EnemyShooterBase
             if (EntityHealth > 0)
             {
                 transform.position = new Vector3(Random.Range(-SpaceShooterData.SpawnX, SpaceShooterData.SpawnX), SpaceShooterData.EnemyBoundLimitsY, transform.position.z);
-                bombFirePos = Random.Range(-SpaceShooterData.EnemyBoundLimitsY * 0.25f, SpaceShooterData.EnemyBoundLimitsY * 0.8f);
-                bombFiredInScreen = false;
+
+                if (transform.rotation.eulerAngles.z != 0f)
+                {
+                    transform.rotation = Quaternion.Euler(0f, 0f, Random.Range(0f, (transform.position.x <= 0f) ? SpaceShooterData.MaxEnemyRotation : -SpaceShooterData.MaxEnemyRotation));
+                }
             }
             else
             {
@@ -125,14 +137,14 @@ public class BomberEnemy : EnemyShooterBase
             if (GameManager.Instance.IsGameOver()) return;
         }
 
-        // If the Enemy hasn't dropped a bomb, and has health...
-        if (!bombFiredInScreen && EntityHealth > 0f)
+        // If the Enemy is visible, and has health...
+        if (isVisible && EntityHealth > 0f)
         {
             // If Time.time is higher than the Fire Rate Timer
-            if (Mathf.Abs(bombFirePos - transform.position.y) <= 0.1f)
+            if (Time.time >= fireRateTimer)
             {
-                // Block bombing
-                bombFiredInScreen = true;
+                // Update timer
+                fireRateTimer = Time.time + Random.Range(fireRate.x, fireRate.y);
 
                 // Play Shoot soundclip
                 AudioManager.Instance?.PlayOneShotClip(shootClip);
@@ -140,13 +152,42 @@ public class BomberEnemy : EnemyShooterBase
                 // Instantiate lasers from pool
                 if (ObjectPool.Instance != null)
                 {
-                    GameObject bomb = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.Bomb, bombSpawn.position, transform.rotation);
+                    GameObject laser = null;
+                    laser = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.EnemyLaser, laserLeftSpawnOffset.position, laserLeftSpawnOffset.rotation);
+                    laser = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.EnemyLaser, laserRightSpawnOffset.position, laserRightSpawnOffset.rotation);
                 }
             }
         }
     }
 
+    private void ShieldRecharge()
+    {
+        shieldActive = true;
+        shieldHealth = shieldMaxHealth;
+        toxicShieldAnim.SetInteger(shieldAnim_HealthIntHash, shieldHealth);
+    }
 
+    public override void TakeDamage(int damageToTake)
+    {
+        if (shieldActive)
+        {
+            // Take Shield Damage, and clamp the value
+            shieldHealth = Mathf.Clamp(shieldHealth - damageToTake, 0, shieldMaxHealth);
+
+            // Update Shield Animator
+            toxicShieldAnim.SetInteger(shieldAnim_HealthIntHash, shieldHealth);
+
+            if (shieldHealth == 0)
+            {
+                shieldActive = false;
+                ObjectPool.Instance?.GetPooledObject(ObjectPool.PoolType.ToxicSmoke, transform.position, Quaternion.identity);
+            }
+
+            return;
+        }
+
+        base.TakeDamage(damageToTake);
+    }
 
     // IDamageable - Behaviour to run when the Enemy has no health left
     public override void Death()
