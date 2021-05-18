@@ -5994,6 +5994,7 @@ MonoBehaviour:
   heatSeekFireRate: 0.15
   extraSpeedMultiplier: 1.5
   beamReadyToUse: 0
+  virusMoveDir: {x: 0, y: 0}
   shootClip: {fileID: 8300000, guid: 75676f361bdfeaf41a46623e95df3dbc, type: 3}
   noAmmoClip: {fileID: 8300000, guid: ff1dc59e435fa3344aa5790dc20f168f, type: 3}
   explosionClip: {fileID: 8300000, guid: a885c043fab7e46438bba03ba9dab6bc, type: 3}
@@ -6273,7 +6274,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1786476184220400549
 Transform:
   m_ObjectHideFlags: 0

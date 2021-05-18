@@ -6717,56 +6717,80 @@ MonoBehaviour:
       type: 3}
     poolContainer: {fileID: 0}
     populateAmount: 8
-  - name: Asteroid
+  - name: Reckless
     poolType: 3
+    prefabToInstantiate: {fileID: 3744142557569821092, guid: f63ff939b7cae4b419fd41b7a680b97a,
+      type: 3}
+    poolContainer: {fileID: 0}
+    populateAmount: 8
+  - name: Watcher
+    poolType: 4
+    prefabToInstantiate: {fileID: 248231966449794552, guid: 4897c001f97a3a64285bb284e74bde0e,
+      type: 3}
+    poolContainer: {fileID: 0}
+    populateAmount: 8
+  - name: Avoider
+    poolType: 5
+    prefabToInstantiate: {fileID: 248231966449794552, guid: 4897c001f97a3a64285bb284e74bde0e,
+      type: 3}
+    poolContainer: {fileID: 0}
+    populateAmount: 8
+  - name: Collector
+    poolType: 6
+    prefabToInstantiate: {fileID: 248231966449794552, guid: 4897c001f97a3a64285bb284e74bde0e,
+      type: 3}
+    poolContainer: {fileID: 0}
+    populateAmount: 8
+  - name: Asteroid
+    poolType: 7
     prefabToInstantiate: {fileID: 6680430017812846841, guid: b197040a4611be8449eef1fa37ba5fbd,
       type: 3}
     poolContainer: {fileID: 0}
     populateAmount: 3
   - name: Explosion
-    poolType: 4
+    poolType: 8
     prefabToInstantiate: {fileID: 3420214906567672560, guid: 9f7042ea233eef1428062a583c81ce52,
       type: 3}
     poolContainer: {fileID: 0}
     populateAmount: 8
   - name: Toxic Smoke
-    poolType: 5
+    poolType: 9
     prefabToInstantiate: {fileID: 2379487079194561703, guid: 405330207507bcf4c82842a954fc674c,
       type: 3}
     poolContainer: {fileID: 0}
     populateAmount: 8
   - name: Player Laser
-    poolType: 6
+    poolType: 10
     prefabToInstantiate: {fileID: 2716096619162409450, guid: e6d94afe478a45148ab7019023453c26,
       type: 3}
     poolContainer: {fileID: 0}
     populateAmount: 10
   - name: Triple Shot
-    poolType: 7
+    poolType: 11
     prefabToInstantiate: {fileID: 8704510761869805030, guid: f21b464ef0bf5324dafc635dbb628cc9,
       type: 3}
     poolContainer: {fileID: 0}
     populateAmount: 21
   - name: Heat Seek Laser
-    poolType: 8
+    poolType: 12
     prefabToInstantiate: {fileID: 3607081831160039948, guid: e34c9ca3d32530d4799f084abe9394d5,
       type: 3}
     poolContainer: {fileID: 0}
     populateAmount: 16
   - name: Enemy Laser
-    poolType: 9
+    poolType: 13
     prefabToInstantiate: {fileID: 8704510761869805030, guid: aa26557520e549e4fa095625b8974e23,
       type: 3}
     poolContainer: {fileID: 0}
     populateAmount: 16
   - name: Bomb
-    poolType: 10
+    poolType: 14
     prefabToInstantiate: {fileID: 5732068508462760270, guid: c00c55a124cca9a48a5ba3b9b5a11c4b,
       type: 3}
     poolContainer: {fileID: 0}
     populateAmount: 4
   - name: Powerup
-    poolType: 11
+    poolType: 15
     prefabToInstantiate: {fileID: 5210187608902166464, guid: ffacbf85ae23d7740b9ee6e9a09301a6,
       type: 3}
     poolContainer: {fileID: 0}

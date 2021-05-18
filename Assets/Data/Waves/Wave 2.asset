@@ -42,7 +42,7 @@ MonoBehaviour:
       customZRot: 0
     - name: R3.2
       enemyToSpawn: 0
-      spawnTime: 2
+      spawnTime: 3
       spawnMode: 3
       customSpawnPos: {x: 10, y: 12}
       customZRot: 0
@@ -54,7 +54,7 @@ MonoBehaviour:
       customZRot: 90
     - name: R4 Right
       enemyToSpawn: 0
-      spawnTime: 3
+      spawnTime: 5
       spawnMode: 3
       customSpawnPos: {x: 20, y: -3}
       customZRot: -90

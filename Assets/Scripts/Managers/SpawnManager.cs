@@ -56,6 +56,22 @@ public class SpawnManager : MonoSingleton<SpawnManager>
                 newEnemy = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.Toxic, randomSpawn, randomRot);
                 break;
 
+            case SpaceShooterData.Enemies.Reckless:
+                newEnemy = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.Reckless, randomSpawn, randomRot);
+                break;
+
+            case SpaceShooterData.Enemies.Watcher:
+                newEnemy = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.Watcher, randomSpawn, randomRot);
+                break;
+
+            case SpaceShooterData.Enemies.Avoider:
+                newEnemy = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.Avoider, randomSpawn, randomRot);
+                break;
+
+            case SpaceShooterData.Enemies.Collector:
+                newEnemy = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.Collector, randomSpawn, randomRot);
+                break;
+
             case SpaceShooterData.Enemies.Asteroid:
                 newEnemy = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.Asteroid, randomSpawn, randomRot);
                 break;
@@ -80,6 +96,22 @@ public class SpawnManager : MonoSingleton<SpawnManager>
 
             case SpaceShooterData.Enemies.Toxic:
                 newEnemy = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.Toxic, pos, randomRot);
+                break;
+
+            case SpaceShooterData.Enemies.Reckless:
+                newEnemy = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.Reckless, pos, randomRot);
+                break;
+
+            case SpaceShooterData.Enemies.Watcher:
+                newEnemy = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.Watcher, pos, randomRot);
+                break;
+
+            case SpaceShooterData.Enemies.Avoider:
+                newEnemy = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.Avoider, pos, randomRot);
+                break;
+
+            case SpaceShooterData.Enemies.Collector:
+                newEnemy = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.Collector, pos, randomRot);
                 break;
 
             case SpaceShooterData.Enemies.Asteroid:
@@ -108,6 +140,22 @@ public class SpawnManager : MonoSingleton<SpawnManager>
                 newEnemy = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.Toxic, randomSpawn, rot);
                 break;
 
+            case SpaceShooterData.Enemies.Reckless:
+                newEnemy = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.Reckless, randomSpawn, rot);
+                break;
+
+            case SpaceShooterData.Enemies.Watcher:
+                newEnemy = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.Watcher, randomSpawn, rot);
+                break;
+
+            case SpaceShooterData.Enemies.Avoider:
+                newEnemy = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.Avoider, randomSpawn, rot);
+                break;
+
+            case SpaceShooterData.Enemies.Collector:
+                newEnemy = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.Collector, randomSpawn, rot);
+                break;
+
             case SpaceShooterData.Enemies.Asteroid:
                 newEnemy = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.Asteroid, randomSpawn, rot);
                 break;
@@ -131,6 +179,22 @@ public class SpawnManager : MonoSingleton<SpawnManager>
 
             case SpaceShooterData.Enemies.Toxic:
                 newEnemy = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.Toxic, pos, rot);
+                break;
+
+            case SpaceShooterData.Enemies.Reckless:
+                newEnemy = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.Reckless, pos, rot);
+                break;
+
+            case SpaceShooterData.Enemies.Watcher:
+                newEnemy = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.Watcher, pos, rot);
+                break;
+
+            case SpaceShooterData.Enemies.Avoider:
+                newEnemy = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.Avoider, pos, rot);
+                break;
+
+            case SpaceShooterData.Enemies.Collector:
+                newEnemy = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.Collector, pos, rot);
                 break;
 
             case SpaceShooterData.Enemies.Asteroid:
