@@ -54,6 +54,14 @@ public class Asteroid : EnemyBase
     protected override void Move()
     {
         transform.Translate(Vector3.down * asteroidMoveSpeed * Time.deltaTime, Space.World);
+
+        // If the enemy is out of bounds, teleport it above the screen in a new X position
+        if (Mathf.Abs(transform.position.y) > SpaceShooterData.EnemyBoundLimitsY || Mathf.Abs(transform.position.x) > SpaceShooterData.WrapX)
+        {
+            // Manually trigger Death Event.
+            base.Death();
+            DisableEnemy();
+        }
     }
 
     // Rotate GameObject using the Z axis

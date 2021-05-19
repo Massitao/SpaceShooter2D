@@ -111,7 +111,7 @@ public class ToxicEnemy : EnemyShooterBase
         transform.Translate(Vector3.down * (selectedSpeed * (enemyCol.enabled ? 1f : enemyExplosionSpeedReduction)) * Time.deltaTime);
 
         // If the enemy is out of bounds, teleport it above the screen in a new X position
-        if (Mathf.Abs(transform.position.y) > SpaceShooterData.EnemyBoundLimitsY || Mathf.Abs(transform.position.x) > SpaceShooterData.SpawnX)
+        if (Mathf.Abs(transform.position.y) > SpaceShooterData.EnemyBoundLimitsY || Mathf.Abs(transform.position.x) > SpaceShooterData.WrapX)
         {
             if (EntityHealth > 0)
             {
@@ -124,7 +124,7 @@ public class ToxicEnemy : EnemyShooterBase
             }
             else
             {
-                gameObject.SetActive(false);
+                DisableEnemy();
             }
         }
     }

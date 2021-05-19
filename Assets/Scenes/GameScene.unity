@@ -6061,7 +6061,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1108318618
 GameObject:
@@ -6722,13 +6722,13 @@ MonoBehaviour:
     prefabToInstantiate: {fileID: 3744142557569821092, guid: f63ff939b7cae4b419fd41b7a680b97a,
       type: 3}
     poolContainer: {fileID: 0}
-    populateAmount: 8
+    populateAmount: 1
   - name: Watcher
     poolType: 4
-    prefabToInstantiate: {fileID: 248231966449794552, guid: 4897c001f97a3a64285bb284e74bde0e,
+    prefabToInstantiate: {fileID: 4827322119050584252, guid: afef48e08b57e2f45b00fd00f8fd4c00,
       type: 3}
     poolContainer: {fileID: 0}
-    populateAmount: 8
+    populateAmount: 1
   - name: Avoider
     poolType: 5
     prefabToInstantiate: {fileID: 248231966449794552, guid: 4897c001f97a3a64285bb284e74bde0e,
@@ -8265,7 +8265,7 @@ PrefabInstance:
     - target: {fileID: 7222636168036227813, guid: 43b64af69b38583479150f4b51a44f7d,
         type: 3}
       propertyPath: m_RootOrder
-      value: 6
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 7222636168036227813, guid: 43b64af69b38583479150f4b51a44f7d,
         type: 3}

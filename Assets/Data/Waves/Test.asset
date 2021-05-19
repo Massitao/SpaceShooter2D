@@ -18,13 +18,13 @@ MonoBehaviour:
     enemiesToSpawn:
     - name: 
       enemyToSpawn: 3
-      spawnTime: 2
+      spawnTime: 5
       spawnMode: 0
       customSpawnPos: {x: 0, y: 0}
       customZRot: 0
     - name: 
       enemyToSpawn: 3
-      spawnTime: 2
+      spawnTime: 5
       spawnMode: 0
       customSpawnPos: {x: 0, y: 0}
       customZRot: 0

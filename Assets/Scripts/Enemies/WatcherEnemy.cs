@@ -1,43 +1,36 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class RecklessEnemy : EnemyShooterBase
+public class WatcherEnemy : EnemyShooterBase
 {
     #region Variables
     #region Components
     [Header("Components")]
-    [SerializeField] private Animator enemyAnim;
     [SerializeField] private Collider2D enemyCol;
     [SerializeField] private AudioSource enemyAudioSource;
     #endregion
 
-    #region Animator
-    [Header("Animator References")]
-    [SerializeField] private string enemyAnim_DeathTrigger;
-    private int enemyAnim_DeathTriggerHash;
-    #endregion
-
-
     [Header("Enemy Move")]
     [SerializeField] private float enemySpeed = 4f;
-    [SerializeField] private float recklessRamSpeed = 6f;
-    [SerializeField] private float recklessAngularSpeed = 5f;
     [SerializeField] [Range(0f, 1f)] private float enemyExplosionSpeedReduction = 0.5f;
 
     [Header("Enemy Shoot")]
-    [SerializeField] private Transform laserSpawnOffset;
+    [SerializeField] private Transform laserDownSpawnOffset;
+    [SerializeField] private Transform laserLeftSpawnOffset;
+    [SerializeField] private Transform laserRightSpawnOffset;
+    [SerializeField] private Transform laserUpLeftSpawnOffset;
+    [SerializeField] private Transform laserUpRightSpawnOffset;
     [SerializeField] private Vector2 fireRate = new Vector2(2f, 4f);
 
     private float fireRateTimer = 0f;
 
 
-    [Header("Reckless Checker")]
-    [SerializeField] private float recklessCheckUpdate;
-    [SerializeField] private float recklessCheckRadius;
-    [SerializeField] private LayerMask recklessCheckLM;
-    private Transform targetToFollow;
-    private Coroutine recklessCheckCoroutine;
+    [Header("Watcher Properties")]
+    [SerializeField] private float watcherCheckUpdate;
+    [SerializeField] private LayerMask watcherCheckLM;
+    private Transform targetToShoot;
+    private float targetToWatcherAngle;
+    private Coroutine watcherCheckerCoroutine;
 
 
     [Header("Audio")]
@@ -52,28 +45,20 @@ public class RecklessEnemy : EnemyShooterBase
         base.OnEnable();
 
         enemyCol.enabled = true;
-        StartRecklessChecker();
+        StartWatcherChecker();
     }
     private void OnDisable()
     {
-        StopRecklessChecker();
+        StopWatcherChecker();
     }
 
-    protected void Start()
-    {
-        enemyAnim_DeathTriggerHash = Animator.StringToHash(enemyAnim_DeathTrigger);
-    }
 
     // Update is called once per frame
     private void Update()
     {
         Move();
+        UpdateTargetAngle();
         Shoot();
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.DrawWireSphere(transform.position, recklessCheckRadius);
     }
     #endregion
 
@@ -105,22 +90,11 @@ public class RecklessEnemy : EnemyShooterBase
 
     protected override void Move()
     {
-        float selectedSpeed = enemySpeed;
-
-        // If the Missile has a target, get a direction and rotate the GameObject towards the target
-        if (targetToFollow != null && EntityHealth != 0)
-        {
-            Vector3 enemyTargetDir = (targetToFollow.transform.position - transform.position).normalized;
-            transform.Rotate(0f, 0f, Vector3.Cross(enemyTargetDir, transform.up).z * recklessAngularSpeed * Time.deltaTime);
-
-            selectedSpeed = recklessRamSpeed;
-        }
-
-
-        transform.Translate(Vector3.down * (selectedSpeed * (enemyCol.enabled ? 1f : enemyExplosionSpeedReduction)) * Time.deltaTime);
+        // Move downwards
+        transform.Translate(Vector3.down * (enemySpeed * (enemyCol.enabled ? 1f : enemyExplosionSpeedReduction)) * Time.deltaTime);
 
         // If the enemy is out of bounds, teleport it above the screen in a new X position
-        if (Mathf.Abs(transform.position.y) > SpaceShooterData.EnemyBoundLimitsY || Mathf.Abs(transform.position.x) > SpaceShooterData.SpawnX)
+        if (Mathf.Abs(transform.position.y) > SpaceShooterData.EnemyBoundLimitsY || Mathf.Abs(transform.position.x) > SpaceShooterData.WrapX)
         {
             if (EntityHealth > 0)
             {
@@ -147,7 +121,7 @@ public class RecklessEnemy : EnemyShooterBase
         }
 
         // If the Enemy is visible, and has health...
-        if (isVisible && EntityHealth > 0f && !targetToFollow)
+        if (isVisible && EntityHealth > 0f)
         {
             // If Time.time is higher than the Fire Rate Timer
             if (Time.time >= fireRateTimer)
@@ -162,67 +136,91 @@ public class RecklessEnemy : EnemyShooterBase
                 if (ObjectPool.Instance != null)
                 {
                     GameObject laser = null;
-                    laser = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.EnemyLaser, laserSpawnOffset.position, transform.rotation);
+
+                    // Down Cannon
+                    if ((targetToWatcherAngle >= -45f && targetToWatcherAngle <= 45f) || targetToShoot == null)
+                    {
+                        laser = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.EnemyLaser, laserDownSpawnOffset.position, laserDownSpawnOffset.rotation);
+                    }
+                    // Left Cannon
+                    else if (targetToWatcherAngle > 45f && targetToWatcherAngle <= 135f)
+                    {
+                        laser = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.EnemyLaser, laserLeftSpawnOffset.position, laserLeftSpawnOffset.rotation);
+                    }
+                    // Right Cannon
+                    else if (targetToWatcherAngle < -45f && targetToWatcherAngle >= -135f)
+                    {
+                        laser = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.EnemyLaser, laserRightSpawnOffset.position, laserRightSpawnOffset.rotation);
+                    }
+                    // Up Cannons
+                    else
+                    {
+                        laser = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.EnemyLaser, laserUpLeftSpawnOffset.position, laserUpLeftSpawnOffset.rotation);
+                        laser = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.EnemyLaser, laserUpRightSpawnOffset.position, laserUpRightSpawnOffset.rotation);
+                    }
                 }
             }
         }
     }
 
 
-    private void StartRecklessChecker()
+    private void StartWatcherChecker()
     {
-        if (recklessCheckCoroutine != null)
+        if (watcherCheckerCoroutine != null)
         {
-            StopCoroutine(recklessCheckCoroutine);
+            StopCoroutine(watcherCheckerCoroutine);
         }
 
-        recklessCheckCoroutine = StartCoroutine(RecklessCheckerCoroutine());
+        watcherCheckerCoroutine = StartCoroutine(WatcherCheckerCoroutine());
     }
-    private IEnumerator RecklessCheckerCoroutine()
+    private IEnumerator WatcherCheckerCoroutine()
     {
         Collider2D target = null;
 
         while (true)
         {
-            target = Physics2D.OverlapCircle(transform.position, recklessCheckRadius, recklessCheckLM);
+            target = Physics2D.OverlapCircle(transform.position, 100f, watcherCheckLM);
 
             if (target != null && target.TryGetComponent(out Ship ship))
             {
-                targetToFollow = ship.transform;
+                targetToShoot = ship.transform;
             }
             else
             {
-                targetToFollow = null;
+                targetToShoot = null;
             }
 
-            yield return new WaitForSeconds(recklessCheckUpdate);
+            yield return new WaitForSeconds(watcherCheckUpdate);
         }
     }
-    private void StopRecklessChecker()
+    private void StopWatcherChecker()
     {
-        if (recklessCheckCoroutine != null)
+        if (watcherCheckerCoroutine != null)
         {
-            StopCoroutine(recklessCheckCoroutine);
-            recklessCheckCoroutine = null;
+            StopCoroutine(watcherCheckerCoroutine);
+            watcherCheckerCoroutine = null;
         }
+    }
+
+    private void UpdateTargetAngle()
+    {
+        if (targetToShoot == null) return;
+
+        Vector3 dir = targetToShoot.position - transform.position;
+        targetToWatcherAngle = Vector3.SignedAngle(dir, -transform.up, Vector3.forward);
     }
 
 
     // IDamageable - Behaviour to run when the Enemy has no health left
     public override void Death()
     {
-        base.Death();
-        Explode();
-    }
-
-    // Removes collisions, slows down movement, plays explosion animation. Once the animation triggers a event, DestroyEnemy will be called
-    private void Explode()
-    {
         enemyCol.enabled = false;
 
-        enemyAnim.SetTrigger(enemyAnim_DeathTriggerHash);
-        enemyAudioSource.PlayOneShot(explosionClip);
-        AddScore();
+        // Instantiate explosion and disable this GameObject after 0.1f seconds
+        GameObject explosion = ObjectPool.Instance.GetPooledObject(ObjectPool.PoolType.Explosion, transform.position, Quaternion.identity);
+        base.Death();
+
+        DisableEnemy(.2f);
     }
     #endregion
 }
