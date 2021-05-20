@@ -17,19 +17,19 @@ MonoBehaviour:
     minEnemiesLeftToProgress: 0
     enemiesToSpawn:
     - name: 
-      enemyToSpawn: 3
+      enemyToSpawn: 5
       spawnTime: 5
       spawnMode: 0
       customSpawnPos: {x: 0, y: 0}
       customZRot: 0
     - name: 
-      enemyToSpawn: 3
+      enemyToSpawn: 5
       spawnTime: 5
       spawnMode: 0
       customSpawnPos: {x: 0, y: 0}
       customZRot: 0
     - name: 
-      enemyToSpawn: 3
+      enemyToSpawn: 5
       spawnTime: 10
       spawnMode: 0
       customSpawnPos: {x: 0, y: 0}

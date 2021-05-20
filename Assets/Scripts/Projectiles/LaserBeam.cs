@@ -10,6 +10,7 @@ public class LaserBeam : MonoBehaviour
     [SerializeField] private SpriteRenderer beamSprite;
     [SerializeField] private SpriteRenderer beamFakeLightSprite;
     [SerializeField] private ParticleSystem beamChargeUpPS;
+    [SerializeField] private Collider2D beamPseudoCollider;
     [SerializeField] private AudioSource beamAudioSource;
     #endregion
 
@@ -252,6 +253,7 @@ public class LaserBeam : MonoBehaviour
     private void BeamGrowStart()
     {
         currentBeamState = BeamState.Firing;
+        beamPseudoCollider.enabled = true;
 
         // Start checking for Damagable Entities
         StartBeamCollisionCheck();
@@ -274,6 +276,7 @@ public class LaserBeam : MonoBehaviour
     private void BeamRegressStart()
     {
         currentBeamState = BeamState.Regressing;
+        beamPseudoCollider.enabled = false;
 
         SetAudioClip(beamRegressingClip, false);
     }

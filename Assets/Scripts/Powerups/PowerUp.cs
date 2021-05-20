@@ -6,6 +6,9 @@ public class PowerUp : MonoBehaviour
     [Header("Components")]
     [SerializeField] private Animator anim;
 
+    [Header("References")]
+    private Ship playerShip;
+
     [Header("Animator")]
     [SerializeField] private string animPowerUpType;
     private int animTypeHash => Animator.StringToHash(animPowerUpType);
@@ -16,6 +19,7 @@ public class PowerUp : MonoBehaviour
 
     [Header("PowerUp Move")]
     [SerializeField] protected float speed = 3f;
+    [SerializeField] protected float virusSpeed = 6f;
 
     [Header("Audio")]
     [SerializeField] private AudioClip powerUpClip;
@@ -27,6 +31,11 @@ public class PowerUp : MonoBehaviour
 
 
     #region MonoBehaviour Methods
+    private void OnEnable()
+    {
+        playerShip = FindObjectOfType<Ship>();
+    }
+
     private void Start()
     {
         if (initialize)
@@ -38,8 +47,20 @@ public class PowerUp : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        // Move Downwards
-        transform.Translate(Vector3.down * speed * Time.deltaTime);
+        if (GameManager.Instance != null && GameManager.Instance.playerShip != null && type == Type.Virus)
+        {
+            Vector3 virusFollow = Vector3.down;
+            virusFollow += (playerShip.transform.position.x <= transform.position.x ? Vector3.left : Vector3.right).normalized;
+
+            // Move Towards player
+            transform.Translate(virusFollow * virusSpeed * Time.deltaTime);
+        }
+        else
+        {
+            // Move Downwards
+            transform.Translate(Vector3.down * speed * Time.deltaTime);
+        }
+
 
         // Destroy if it reaches the Despawn Point
         if (transform.position.y <= -SpaceShooterData.EnemyBoundLimitsY)
