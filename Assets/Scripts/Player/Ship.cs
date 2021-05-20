@@ -43,6 +43,7 @@ public class Ship : MonoBehaviour, IHealable
     private Vector2 moveInput;
     private bool doShoot;
     private bool thrustPressed;
+    private bool magnetPressed;
     #endregion
 
     #region Ship Health
@@ -117,6 +118,14 @@ public class Ship : MonoBehaviour, IHealable
     [SerializeField] [Range(0, 30)] private int shipProjectileLayer;
     #endregion
 
+    #region Ship Magnet
+    [Header("Ship Magnet")]
+    [SerializeField] [Range(0f, 1f)] private float shipMagnetPower = 1f;
+    [SerializeField] [Range(0f, 1f)] private float shipMagnetWasteSpeed = .2f;
+    [SerializeField] [Range(0f, 1f)] private float shipMagnetRecoverySpeed = .4f;
+    [SerializeField] [Range(0f, 10f)] private float shipMagnetRecoveryCooldown = .4f;
+    #endregion
+
     #region PowerUps
     [Header("Abilities")]
     [SerializeField] private int shootAbilityAmmoRefill = 10;
@@ -181,6 +190,8 @@ public class Ship : MonoBehaviour, IHealable
     public event System.Action<int> OnAmmoRefill;
     public event System.Action<float> OnThrusterCooldownChange;
     public event System.Action<float> OnThrusterFuelChange;
+    public event System.Action<float> OnMagnetCooldownChange;
+    public event System.Action<float> OnMagnetPowerChange;
     public event System.Action<int> OnEntityHealthChange;
     public event System.Action<IDamageable> OnEntityKilled;
     #endregion
@@ -209,7 +220,8 @@ public class Ship : MonoBehaviour, IHealable
     private void Start()
     {
         // Start Thruster Coroutine
-        StartCoroutine(ThrusterBehaviour());
+        StartCoroutine(ThrusterCoroutine());
+        StartCoroutine(MagnetCoroutine());
     }
 
     // Update is called once per frame
@@ -245,6 +257,11 @@ public class Ship : MonoBehaviour, IHealable
     {
         // Set Thrust Input value
         thrustPressed = input.ReadValueAsButton();
+    }
+    public void UpdateMagnetInput(InputAction.CallbackContext input)
+    {
+        // Set Magnet Input value
+        magnetPressed = input.ReadValueAsButton();
     }
     #endregion
 
@@ -286,7 +303,7 @@ public class Ship : MonoBehaviour, IHealable
         transform.position = new Vector3(transform.position.x, Mathf.Clamp(transform.position.y, SpaceShooterData.PlayerBoundLimitsY.x, SpaceShooterData.PlayerBoundLimitsY.y), transform.position.z);
     }
 
-    private IEnumerator ThrusterBehaviour()
+    private IEnumerator ThrusterCoroutine()
     {
         bool successfulCooldown = false;
 
@@ -678,6 +695,78 @@ public class Ship : MonoBehaviour, IHealable
 
         yield return virusDuration;
         virusCoroutine = null;
+    }
+    #endregion
+
+    #region PowerUp Magnet
+    private IEnumerator MagnetCoroutine()
+    {
+        bool successfulCooldown = false;
+
+        while (true)
+        {
+            // If the Magnet Action input is pressed and has power...
+            if (magnetPressed && shipMagnetPower > 0f)
+            {
+                // Drain Magnet Power
+                shipMagnetPower = Mathf.Clamp(shipMagnetPower - shipMagnetWasteSpeed * Time.deltaTime, 0f, 1f);
+
+                // Trigger Thruster Fuel Change Event
+                OnMagnetPowerChange?.Invoke(shipMagnetPower);
+
+                // Attract powerups to player
+                PowerUp.attractedByPlayer = true;
+            }
+            else
+            {
+                // Else, powerups are no longer attracted by the player 
+                PowerUp.attractedByPlayer = false;
+
+                // If the ship used the Magnet... 
+                if (shipMagnetPower < 1f)
+                {
+                    successfulCooldown = true;
+
+                    // Wait for the recovery cooldown
+                    for (float i = shipMagnetRecoveryCooldown; i >= 0f; i -= Time.deltaTime)
+                    {
+                        // If the player wants to interrupt the magnet cooldown to use it, abort cooldown
+                        if (magnetPressed && shipMagnetPower > 0f)
+                        {
+                            successfulCooldown = false;
+                            OnMagnetCooldownChange?.Invoke(0f);
+                            break;
+                        }
+
+                        // Trigger Magnet Cooldown Change Event
+                        OnMagnetCooldownChange?.Invoke(Mathf.InverseLerp(shipMagnetRecoveryCooldown, 0f, i));
+
+                        yield return null;
+                    }
+
+                    // No longer on cooldown
+                    OnMagnetCooldownChange?.Invoke(0f);
+
+                    // If the cooldown was successful...
+                    if (successfulCooldown)
+                    {
+                        // While the ship is not at full magnet power, and while the player is not trying to use the magnet...
+                        while (shipMagnetPower < 1f && !magnetPressed)
+                        {
+                            // Restore power
+                            shipMagnetPower = Mathf.Clamp(shipMagnetPower + shipMagnetRecoverySpeed * Time.deltaTime, 0f, 1f);
+
+                            // Trigger Magnet Power Change Event
+                            OnMagnetPowerChange?.Invoke(shipMagnetPower);
+
+                            yield return null;
+                        }
+                    }
+                }
+            }
+
+            yield return null;
+        }
     }
     #endregion
 

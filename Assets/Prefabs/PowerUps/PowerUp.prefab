@@ -232,4 +232,7 @@ MonoBehaviour:
   animPowerUpType: PowerUpType
   type: 0
   speed: 3
+  virusSpeed: 6
+  attractedSpeed: 9
   powerUpClip: {fileID: 8300000, guid: 5ee343246919d2b4bba63ae629e95494, type: 3}
+  initialize: 0

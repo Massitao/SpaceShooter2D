@@ -5840,6 +5840,21 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 393706ac-b34f-44bf-8bdb-681d5308d2ec
     m_ActionName: Player/Thruster[/Keyboard/leftShift]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 7222636168036227811}
+        m_MethodName: UpdateMagnetInput
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: f7f9bdee-1bb9-4f26-9d4a-8d5f78be8b2e
+    m_ActionName: Player/Magnet[/Keyboard/c]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -5983,6 +5998,10 @@ MonoBehaviour:
   ammoCount: 0
   maxAmmo: 30
   shipProjectileLayer: 11
+  shipMagnetPower: 1
+  shipMagnetWasteSpeed: 0.5
+  shipMagnetRecoverySpeed: 0.1
+  shipMagnetRecoveryCooldown: 2
   shootAbilityAmmoRefill: 15
   tripleShotPrefab: {fileID: 8704510761869805030, guid: f21b464ef0bf5324dafc635dbb628cc9,
     type: 3}

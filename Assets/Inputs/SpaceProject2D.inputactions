@@ -28,6 +28,14 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
+                },
+                {
+                    "name": "Magnet",
+                    "type": "Button",
+                    "id": "f7f9bdee-1bb9-4f26-9d4a-8d5f78be8b2e",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
                 }
             ],
             "bindings": [
@@ -149,6 +157,17 @@
                     "processors": "",
                     "groups": "Keyboard&Mouse",
                     "action": "Thruster",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c455224e-5460-40e2-ab64-13d210c1db66",
+                    "path": "<Keyboard>/c",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Magnet",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
