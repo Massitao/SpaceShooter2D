@@ -711,7 +711,7 @@ public class Ship : MonoBehaviour, IHealable
                 // Drain Magnet Power
                 shipMagnetPower = Mathf.Clamp(shipMagnetPower - shipMagnetWasteSpeed * Time.deltaTime, 0f, 1f);
 
-                // Trigger Thruster Fuel Change Event
+                // Trigger Magnet Power Change Event
                 OnMagnetPowerChange?.Invoke(shipMagnetPower);
 
                 // Attract powerups to player

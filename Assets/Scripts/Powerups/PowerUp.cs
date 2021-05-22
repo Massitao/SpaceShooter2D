@@ -106,5 +106,11 @@ public class PowerUp : MonoBehaviour
         player.ActivatePowerUp(type);
         AudioManager.Instance?.PlayOneShotClip(powerUpClip);
     }
+
+    public void Explode()
+    {
+        ObjectPool.Instance?.GetPooledObject(ObjectPool.PoolType.Explosion, transform.position, Quaternion.identity);
+        gameObject.SetActive(false);
+    }
     #endregion
 }

@@ -21,6 +21,12 @@ public class Laser : LaserBase
             damageableEntity.TakeDamage(damage);
             gameObject.SetActive(false);
         }
+
+        if (collision.gameObject.TryGetComponent(out PowerUp powerup))
+        {
+            powerup.Explode();
+            gameObject.SetActive(false);
+        }
     }
 
     protected override void Move()
