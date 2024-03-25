@@ -1,7 +1,7 @@
-## Space Shooter 2D - Unity 2019
+# Space Shooter 2D - Unity 2019
 Just your usual space shooter, packed with cool features and code patterns. 
 
-# Main Highlights
+## Main Highlights
 - Player ship mounted with thrusters ("sprint with stamina"), a shield, various firing modes, including a giant laser beam!
 - Waves handled through ScriptableObjects
 - Inheritance to create new enemies and projectile types
@@ -9,7 +9,7 @@ Just your usual space shooter, packed with cool features and code patterns.
 - Object Pooling, Loot Tables and Factories
 
 
-# Extra
+## Extra
 Back in 2021, I wrote some articles explaining some of the features:
 - [Heat Seeking Lasers](https://medium.com/nerd-for-tech/galaxy-shooter-2d-heat-seeking-lasers-20-a8347dfde1b4)
 - [Laser Beam](https://medium.com/nerd-for-tech/galaxy-shooter-2d-laser-beam-22-21e317363941)
